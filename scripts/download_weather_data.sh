@@ -1,5 +1,35 @@
 #!/bin/sh
+############################### install python prerequisites ###############################
 
+# pip3
+pip_installed=$(pip3 --version)
+
+if [ -z "$pip_installed" ]
+then
+  echo "pip3 is not installed. Please install pip to continue."
+  exit 1
+fi
+
+pandas_installed=$(pip3 show pandas)
+
+if [ -z "$pandas_installed" ]
+then
+  pip3 install pandas
+else
+  echo "pandas is already installed"
+fi
+
+# netCDF4
+netCDF4_installed=$(pip3 show netCDF4 | grep Name)
+
+if [ -z "$netCDF4_installed" ]
+then
+  pip3 install netCDF4
+else
+  echo "netCDF4 is already installed"
+fi
+
+############################### Data sources #######################################
 mkdir -p "/Users/abiratsis/Desktop/Covid-19/Data/weather/temp"
 mkdir -p "/Users/abiratsis/Desktop/Covid-19/Data/weather/humidity"
 mkdir -p "/Users/abiratsis/Desktop/Covid-19/Data/weather/wind"

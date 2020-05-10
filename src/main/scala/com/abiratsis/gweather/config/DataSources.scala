@@ -4,22 +4,28 @@ import pureconfig._
 import pureconfig.generic.auto._
 
 object Config{
-  val dataSources = ConfigSource.default.load[DataSources]
+  val current = ConfigSource.default.load[Config]
 }
 
-case class DataSources(airTemperatureSourceUrl: String, airTemperatureDestinationDir: String,
-                                       skinTemperatureSourceUrl: String, skinTemperatureDestinationDir: String,
-                                       maxTemperatureSourceUrl: String, maxTemperatureDestinationDir: String,
-                                       minTemperatureSourceUrl: String, minTemperatureDestinationDir: String,
-                                       humiditySourceUrl: String, humidityDestinationDir: String,
-                                       uwindSourceUrl: String, uwindDestinationDir: String,
-                                       vwindSourceUrl: String, vwindDestinationDir: String,
-                                       clearSkyDownwardLongWaveSourceUrl: String, clearSkyDownwardLongWaveDestinationDir: String,
-                                       clearSkyDownwardSolarSourceUrl: String, clearSkyDownwardSolarDestinationDir: String,
-                                       downwardLongwaveRadiationSourceUrl: String, downwardLongwaveRadiationDestinationDir: String,
-                                       downwardSolarRadiationSourceUrl: String, downwardSolarRadiationDestinationDir: String,
-                                       netLongwaveRadiationSourceUrl: String, netLongwaveRadiationDestinationDir: String,
-                                       netShortwaveRadiationSourceUrl: String, netShortwaveRadiationDestinationDir: String)
+case class Config(dataSources: DataSources)
 
+case class DataSources(activeResources: Seq[String], resources: Resources, directories: Directories)
 
+case class Resources(airTemperatureUrl: String,
+                       skinTemperatureUrl: String,
+                       maxTemperatureUrl: String,
+                       minTemperatureUrl: String,
+                       humidityUrl: String,
+                       uwindUrl: String,
+                       vwindUrl: String,
+                       clearSkyDownwardLongWaveUrl: String,
+                       clearSkyDownwardSolarUrl: String,
+                       downwardLongwaveRadiationUrl: String,
+                       downwardSolarRadiationUrl: String,
+                       netLongwaveRadiationUrl: String,
+                       netShortwaveRadiationUrl: String)
 
+case class Directories(temperatureDir: String,
+                       humidityDir: String,
+                       windDir: String,
+                       solarRadiationDir: String)

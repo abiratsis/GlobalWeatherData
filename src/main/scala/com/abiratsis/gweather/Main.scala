@@ -1,14 +1,17 @@
 package com.abiratsis.gweather
 
-import com.abiratsis.gweather.config.Config
-import org.apache.spark.sql.SparkSession
-
-
+import com.abiratsis.gweather.config.{Config, Directories, Resources}
 
 object Main {
   def main(args: Array[String]): Unit = {
 
-    println (Config.dataSources.right.get)
+    val conf = Config.current
+
+    conf match {
+      case Left(ex) => println(ex)
+      case Right(c) => println(c.dataSources)
+    }
+
 
 //    lazy val spark = SparkSession
 //      .builder()
