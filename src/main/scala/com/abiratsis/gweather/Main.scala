@@ -1,6 +1,8 @@
 package com.abiratsis.gweather
 
 import com.abiratsis.gweather.config.{Config, Directories, Resources}
+import org.apache.spark.sql.SparkSession
+
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -11,7 +13,6 @@ object Main {
       case Left(ex) => println(ex)
       case Right(c) => println(c.dataSources)
     }
-
 
 //    lazy val spark = SparkSession
 //      .builder()
@@ -24,6 +25,7 @@ object Main {
 //
 //    import spark.implicits._
 //    import org.apache.spark.sql.functions._
+
   }
 
 }
