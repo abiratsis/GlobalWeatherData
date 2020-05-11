@@ -8,6 +8,4 @@ object Util {
         f.setAccessible(true)
         a + (f.getName -> f.get(cc))
     }
-
-
 }

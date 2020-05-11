@@ -3,8 +3,10 @@ package com.abiratsis.gweather.shell
 import sys.process._
 
 object ShellProxy {
-  private final val shell = "/bin/sh"
-  private final val scriptFile = "/Users/abiratsis/Desktop/GlobalWeatherData/scripts/download_weather_data.sh &&"
+  private final val shell = "sh"
+  private final val scriptFile = "/Users/abiratsis/Desktop/GlobalWeatherData/scripts/download_weather_data.sh"
 
-  def exec(cmd: String): String = s". $scriptFile $cmd" !!
+  def exec(cmd: String): String = {
+     Seq("sh", "-c", s"source $scriptFile $cmd") !!
+  }
 }

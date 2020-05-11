@@ -252,3 +252,5 @@ download_sources() {
     echo "${nswrs_url} was downloaded at ${solar_dir}."
   fi
 }
+
+"$@"
