@@ -1,17 +1,27 @@
 package com.abiratsis.gweather
 
-import com.abiratsis.gweather.config.{Config, Directories, Resources}
-import org.apache.spark.sql.SparkSession
+import com.abiratsis.gweather.config.Config
+import com.abiratsis.gweather.shell.DownloadCommand
+import com.abiratsis.gweather.utils.Util
+//import org.apache.spark.sql.SparkSession
 
 
-object Main {
-  def main(args: Array[String]): Unit = {
-
+object Main extends App {
     val conf = Config.current
 
     conf match {
       case Left(ex) => println(ex)
-      case Right(c) => println(c.dataSources)
+      case Right(c) => {
+        val downloadDirs = Util.ccToMap(c.dataSources.directories)
+        val downloadSources = Util.ccToMap(c.dataSources.sources)
+
+        val mergedDirsParams = DownloadCommand.getParams(downloadDirs, DownloadCommand.dirCommandLineParams)
+        val mergedSourcesParams = DownloadCommand.getParams(downloadSources, DownloadCommand.sourcesCommandLineParams)
+
+//        println(mergedDirsParams ++ mergedSourcesParams)
+        val downloadCmd : DownloadCommand = new DownloadCommand
+        println(downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams))
+      }
     }
 
 //    lazy val spark = SparkSession
@@ -25,7 +35,5 @@ object Main {
 //
 //    import spark.implicits._
 //    import org.apache.spark.sql.functions._
-
-  }
 
 }

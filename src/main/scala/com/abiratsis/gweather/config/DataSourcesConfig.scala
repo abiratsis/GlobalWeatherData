@@ -23,7 +23,9 @@ case class DataSource(airTemperatureUrl: String,
                        downwardLongwaveRadiationUrl: String,
                        downwardSolarRadiationUrl: String,
                        netLongwaveRadiationUrl: String,
-                       netShortwaveRadiationUrl: String)
+                       netShortwaveRadiationUrl: String){
+
+}
 
 case class Directories(temperatureDir: String,
                        humidityDir: String,
