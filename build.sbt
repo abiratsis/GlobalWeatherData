@@ -21,4 +21,22 @@ libraryDependencies ++= Seq(
   "com.github.pureconfig" %% "pureconfig" % "0.12.3"
 )
 
+//Compile / packageBin / mappings += {
+//  (baseDirectory.value / "scripts" / "download_weather.sh") -> "scripts/download_weather.sh"
+//}
+
+lazy val postBuild  = taskKey[Unit]("post build")
+postBuild := {
+  val log = streams.value.log
+  val source = (baseDirectory.value / "scripts/download_weather.sh")
+  val target = crossTarget.value / "scripts/download_weather.sh"
+
+  log.info(s"Copying ${source.getPath} to ${target.getPath}")
+  IO.copyFile(source, target)
+  None
+}
+
+Compile / packageBin := (Compile / packageBin dependsOn postBuild).value
+
+exportJars := true
 logBuffered in Test := false
