@@ -28,11 +28,17 @@ libraryDependencies ++= Seq(
 lazy val postBuild  = taskKey[Unit]("post build")
 postBuild := {
   val log = streams.value.log
-  val source = (baseDirectory.value / "scripts/download_weather.sh")
-  val target = crossTarget.value / "scripts/download_weather.sh"
+  val shellSource = (baseDirectory.value / "scripts/download_weather.sh")
+  val shellTarget = crossTarget.value / "scripts/download_weather.sh"
+  val pySource = (baseDirectory.value / "scripts/nc_to_csv.py")
+  val pyTarget = crossTarget.value / "scripts/nc_to_csv.py"
 
-  log.info(s"Copying ${source.getPath} to ${target.getPath}")
-  IO.copyFile(source, target)
+  log.info(s"Copying ${shellSource.getPath} to ${shellTarget.getPath}")
+  IO.copyFile(shellSource, shellTarget)
+
+  log.info(s"Copying ${pySource.getPath} to ${pyTarget.getPath}")
+  IO.copyFile(pySource, pyTarget)
+
   None
 }
 

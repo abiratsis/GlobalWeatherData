@@ -1,8 +1,10 @@
 package com.abiratsis.gweather
 
+import java.net.{URI, URL}
+
 import com.abiratsis.gweather.config.Config
-import com.abiratsis.gweather.shell.DownloadCommand
-import com.abiratsis.gweather.utils.Util
+import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
+import com.abiratsis.gweather.utils.{Util, implicits}
 //import org.apache.spark.sql.SparkSession
 
 
@@ -15,12 +17,17 @@ object Main extends App {
         val downloadDirs = Util.ccToMap(c.dataSources.directories)
         val downloadSources = Util.ccToMap(c.dataSources.sources)
 
-        val mergedDirsParams = DownloadCommand.getParams(downloadDirs, DownloadCommand.dirCommandLineParams)
-        val mergedSourcesParams = DownloadCommand.getParams(downloadSources, DownloadCommand.sourcesCommandLineParams)
+        val mergedDirsParams = ShellCommand.getParams(downloadDirs, ShellCommand.dirCommandLineParams)
+        val mergedSourcesParams = ShellCommand.getParams(downloadSources, ShellCommand.sourcesCommandLineParams)
 
-//        println(mergedDirsParams ++ mergedSourcesParams)
         val downloadCmd : DownloadCommand = new DownloadCommand
-        println(downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams))
+//        println(downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams))
+
+        val ncToCsvParams = NcToCsvCommand.getParams(downloadSources, downloadDirs, ShellCommand.sourcesCommandLineParams)
+        val ncToCsvCmd : NcToCsvCommand = new NcToCsvCommand
+
+//        println(ncToCsvParams)
+        println(ncToCsvCmd.execute(ncToCsvParams))
       }
     }
 
