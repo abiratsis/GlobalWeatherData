@@ -1,7 +1,8 @@
 package com.abiratsis.gweather.shell.commands
 
 import com.abiratsis.gweather.shell.ShellProxy
-import com.abiratsis.gweather.utils.implicits._
+import com.abiratsis.gweather.common.implicits._
+
 trait ShellCommand {
   /**
    * The function name in the shell script.
@@ -30,6 +31,7 @@ trait ShellCommand {
 }
 
 object ShellCommand{
+
   val sourcesCommandLineParams : Map[String, String] = Map(
     "airTemperatureUrl" -> "--airtemp",
     "skinTemperatureUrl" ->  "--skintemp",
