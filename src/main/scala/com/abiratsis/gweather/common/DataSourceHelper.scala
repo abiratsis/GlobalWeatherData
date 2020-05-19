@@ -19,7 +19,8 @@ class DataSourceHelper(conf : Config){
     "downwardLongwaveRadiationUrl" -> "solarRadiationDir",
     "downwardSolarRadiationUrl" -> "solarRadiationDir",
     "netLongwaveRadiationUrl" -> "solarRadiationDir",
-    "netShortwaveRadiationUrl" -> "solarRadiationDir"
+    "netShortwaveRadiationUrl" -> "solarRadiationDir",
+    "worldCountriesUrl" -> "worldDir"
   )
 }
 

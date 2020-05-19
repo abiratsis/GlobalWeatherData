@@ -17,9 +17,13 @@ object Main extends App {
         val ds = DataSourceHelper(c)
         val shell = ShellCommand
 
-        val mergedDirsParams = ShellCommand.getParams(ds.downloadDirs, shell.dirCommandLineParams)
+        val mergedDirsParams = ShellCommand.getParams(
+          ds.downloadDirs,
+          shell.dirCommandLineParams)
 
-        val mergedSourcesParams = ShellCommand.getParams(ds.downloadSources, shell.sourcesCommandLineParams)
+        val mergedSourcesParams = ShellCommand.getParams(
+          ds.downloadSources,
+          shell.sourcesCommandLineParams)
 
         val downloadCmd = new DownloadCommand
         println(downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams))

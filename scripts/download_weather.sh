@@ -208,6 +208,7 @@ download_sources() {
   humidity_dir=""
   wind_dir=""
   solar_dir=""
+  world_dir=""
 
   # temp
   airtemp_url=""
@@ -230,6 +231,7 @@ download_sources() {
   nlwrs_url=""
   nswrs_url=""
 
+  world_url=""
   for arg in "$@"; do
     case $arg in
     -t|--temperature)
@@ -249,6 +251,11 @@ download_sources() {
       ;;
     -s|--solar)
       solar_dir="$2"
+      shift
+      shift
+      ;;
+    -r|--world)
+      world_dir="$2"
       shift
       shift
       ;;
@@ -314,6 +321,11 @@ download_sources() {
       ;;
     --nswrs)
       nswrs_url="$2"
+      shift
+      shift
+      ;;
+    --world)
+      world_url="$2"
       shift
       shift
       ;;
@@ -422,6 +434,14 @@ download_sources() {
   if [ -n "$nswrs_url" ]; then
     wget -P "$solar_dir" -N "$nswrs_url"
     echo "${nswrs_url} was downloaded at ${solar_dir}."
+  fi
+
+  # download world data
+  if [ -n "$world_url" ]; then
+    wget -P "$world_dir" -N "$world_url"
+    echo "${world_url} was downloaded at ${world_dir}."
+
+    unzip -o "${world_dir}/simplemaps_worldcities_basicv1.6.zip" -d "${world_dir}"
   fi
 }
 "$@"

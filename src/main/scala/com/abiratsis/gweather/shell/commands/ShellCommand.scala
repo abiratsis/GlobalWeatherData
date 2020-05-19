@@ -45,14 +45,16 @@ object ShellCommand{
     "downwardLongwaveRadiationUrl" -> "--dlwrf",
     "downwardSolarRadiationUrl" -> "--dswrf",
     "netLongwaveRadiationUrl" -> "--nlwrs",
-    "netShortwaveRadiationUrl" -> "--nswrs"
+    "netShortwaveRadiationUrl" -> "--nswrs",
+    "worldCountriesUrl" -> "--world"
   )
 
   val dirCommandLineParams : Map[String, String] = Map(
     "temperatureDir" -> "-t",
     "humidityDir" -> "-h",
     "windDir" -> "-w",
-    "solarRadiationDir" -> "-s"
+    "solarRadiationDir" -> "-s",
+    "worldDir" -> "-r"
   )
 
   /**
