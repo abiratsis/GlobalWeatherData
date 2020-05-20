@@ -25,6 +25,7 @@ filename = os.path.join(output_dir, csv_name)
 print(f'Writing data in tabular form to {filename} (this may take some time)...')
 times_grid, latitudes_grid, longitudes_grid = [
     x.flatten() for x in np.meshgrid(times, latitudes, longitudes, indexing='ij')]
+
 df = pd.DataFrame({
     'time': [t.strftime() for t in times_grid],
     'lat': latitudes_grid,

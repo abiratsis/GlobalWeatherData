@@ -118,6 +118,11 @@ nc_to_csv() {
       shift
       shift
       ;;
+    --world)
+      tmp="$2"
+      shift
+      shift
+      ;;
     esac
   done
 
@@ -254,7 +259,7 @@ download_sources() {
       shift
       shift
       ;;
-    -r|--world)
+    -r)
       world_dir="$2"
       shift
       shift
