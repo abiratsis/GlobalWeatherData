@@ -2,9 +2,12 @@ package com.abiratsis.gweather.spark
 
 import com.abiratsis.gweather.common.DataSourceContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import java.io.File
 
 class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit val spark: SparkSession)
   extends GeoSpacialDataset {
+
+  override val deltaDestination: String = dsContext.downloadDirs("temperatureDir") + "/merged"
 
   override val valueColumns: Map[String, String] = Map(
     "airTemperatureUrl" -> "air",
@@ -30,9 +33,10 @@ class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit va
     }
   }
 
-  override def saveAsDelta(path: String = dsContext.downloadDirs("temperatureDir") + "/merged"): Unit =
-    this.load.write
-    .format("delta")
-    .mode("overwrite")
-    .save(path)
+  override def cleanUp: Unit = {
+    dsContext.temperatureActiveSources.foreach{ case (key, path) =>
+      new File(path).delete()
+      new File(path.replace(".csv", ".nc")).delete()
+    }
+  }
 }

@@ -31,16 +31,12 @@ object Main extends App {
         implicit val ds = DataSourceContext(c)
         val shell = ShellCommand
 
-        val mergedDirsParams = ShellCommand.getParams(
-          ds.downloadDirs,
-          shell.dirCommandLineParams)
+        val mergedDirsParams = ShellCommand.getParams(ds.downloadDirs, shell.dirCommandLineParams)
 
-        val mergedSourcesParams = ShellCommand.getParams(
-          ds.downloadSources,
-          shell.sourcesCommandLineParams)
+        val mergedSourcesParams = ShellCommand.getParams(ds.downloadSources, shell.sourcesCommandLineParams)
 
         val downloadCmd = new DownloadCommand
-        //println(downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams))
+        downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
 
         val ncToCsvParams = NcToCsvCommand.getParams(
           ds.downloadSources,
@@ -48,14 +44,13 @@ object Main extends App {
           ds.sourcesByDir,
           shell.sourcesCommandLineParams)
 
+        println(ncToCsvParams)
         val ncToCsvCmd : NcToCsvCommand = new NcToCsvCommand
-
-//        println(ncToCsvParams)
-        //println(ncToCsvCmd.execute(ncToCsvParams))
+//        ncToCsvCmd.execute(ncToCsvParams)
 
         val tds = new TemperatureDataset
 
-        tds.saveAsDelta()
+//        tds.saveAsDelta()
       }
     }
 }
