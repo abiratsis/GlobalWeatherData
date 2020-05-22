@@ -32,8 +32,15 @@ object Util {
 object implicits {
   implicit class MapExt[A, B, C](val left: immutable.Map[A, B]) {
     def join(right: immutable.Map[A, C]) : immutable.Map[A, Seq[_]] = {
-      (left.toSeq ++ right.toSeq).groupBy(_._1).mapValues(_.map{_._2})
+      val inter = left.keySet.intersect(right.keySet)
+
+      val leftFiltered =  left.filterKeys{inter.contains(_)}
+      val rightFiltered = right.filterKeys{inter.contains(_)}
+
+      (leftFiltered.toSeq ++ rightFiltered.toSeq).groupBy(_._1).mapValues(_.map{_._2})
     }
   }
+
+
 }
 
