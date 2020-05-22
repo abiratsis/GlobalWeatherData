@@ -25,15 +25,14 @@ class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit va
     }.reduce {
       (df1, df2) =>
         df1.join(df2, commonCols, "inner").drop(commonCols.map(c => df2(c)))
-    }.transform{
-      toWeatherData(valueColumns.values.toSeq:_*)
+    }.transform {
+      toWeatherData(valueColumns.values.toSeq: _*)
     }
   }
 
-  override def saveAsDelta: Unit = {
-//    .write
-//      .format("delta")
-//      .mode("overwrite")
-//      .save()
-  }
+  override def saveAsDelta(path: String = dsContext.downloadDirs("temperatureDir") + "/merged"): Unit =
+    this.load.write
+    .format("delta")
+    .mode("overwrite")
+    .save(path)
 }

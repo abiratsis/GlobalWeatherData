@@ -9,8 +9,8 @@ trait GeoSpacialDataset {
   val spark: SparkSession
   val valueColumns : Map[String, String]
 
-  def load() : DataFrame
-  def saveAsDelta : Unit
+  def load : DataFrame
+  def saveAsDelta(path: String) : Unit
 
   def toWeatherData(cols: String*): DataFrame => DataFrame = {
     val wcols = cols.map{c => col(c).cast("double").as(c)}

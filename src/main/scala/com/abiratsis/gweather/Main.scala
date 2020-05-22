@@ -1,8 +1,8 @@
 package com.abiratsis.gweather
 
+import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.common.{DataSourceContext, Util, implicits}
 import com.abiratsis.gweather.spark.TemperatureDataset
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
@@ -17,6 +17,10 @@ object Main extends App {
         .config("spark.executor.memory", "6g")
         .config("spark.driver.memory", "1g")
         .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+        .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
+        .config("geospark.global.index", "true")
+        .config("geospark.global.indextype", "quadtree")
+        .config("geospark.join.gridtype", "kdbtree")
         .getOrCreate()
 
     GeoSparkSQLRegistrator.registerAll(spark)
@@ -51,20 +55,7 @@ object Main extends App {
 
         val tds = new TemperatureDataset
 
-        println(tds.load.show(100))
+        tds.saveAsDelta()
       }
     }
-
-//    lazy val spark = SparkSession
-//      .builder()
-//      .appName("test")
-//      .master("local[*]")
-//      .config("spark.executor.memory", "6g")
-//      .config("spark.driver.memory", "1g")
-//      .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-//      .getOrCreate()
-//
-//    import spark.implicits._
-//    import org.apache.spark.sql.functions._
-
 }
