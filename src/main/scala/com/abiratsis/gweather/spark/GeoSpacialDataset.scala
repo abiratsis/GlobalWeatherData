@@ -23,7 +23,7 @@ trait GeoSpacialDataset {
   def cleanUp : Unit
 
   /**
-   *
+   * Save data as Delta table.
    */
   def saveAsDelta(): Unit =
     this.load.write

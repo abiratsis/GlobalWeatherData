@@ -7,50 +7,51 @@ import com.abiratsis.gweather.spark.TemperatureDataset
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
+//import org.apache.log4j.{Level, Logger}
+
 object Main extends App {
-    implicit val conf = Config.current
+  //    Logger.getLogger("org")
 
-    implicit val spark = SparkSession
-        .builder()
-        .appName("test")
-        .master("local[*]")
-        .config("spark.executor.memory", "6g")
-        .config("spark.driver.memory", "1g")
-        .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-        .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
-        .config("geospark.global.index", "true")
-        .config("geospark.global.indextype", "quadtree")
-        .config("geospark.join.gridtype", "kdbtree")
-        .getOrCreate()
+  implicit val conf = Config.current
 
-    GeoSparkSQLRegistrator.registerAll(spark)
+  implicit val spark = SparkSession
+    .builder()
+    .appName("test")
+    .master("local[*]")
+    .config("spark.executor.memory", "6g")
+    .config("spark.driver.memory", "2g")
+    .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
+    .config("geospark.global.index", "true")
+    .config("geospark.global.indextype", "quadtree")
+    .config("geospark.join.gridtype", "kdbtree")
+    .getOrCreate()
 
-    conf match {
-      case Left(ex) => println(ex)
-      case Right(c) => {
-        implicit val ds = DataSourceContext(c)
-        val shell = ShellCommand
+  spark.sparkContext.setLogLevel("WARN")
 
-        val mergedDirsParams = ShellCommand.getParams(ds.downloadDirs, shell.dirCommandLineParams)
+  GeoSparkSQLRegistrator.registerAll(spark)
 
-        val mergedSourcesParams = ShellCommand.getParams(ds.downloadSources, shell.sourcesCommandLineParams)
+  conf match {
+    case Left(ex) => println(ex)
+    case Right(c) => {
+      implicit val ds = DataSourceContext(c)
+      val shell = ShellCommand
 
-        val downloadCmd = new DownloadCommand
-        downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
+      val mergedDirsParams = ShellCommand.getParams(ds.downloadDirs, shell.dirCommandLineParams)
 
-        val ncToCsvParams = NcToCsvCommand.getParams(
-          ds.downloadSources,
-          ds.downloadDirs,
-          ds.sourcesByDir,
-          shell.sourcesCommandLineParams)
+      val mergedSourcesParams = ShellCommand.getParams(ds.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
-        println(ncToCsvParams)
-        val ncToCsvCmd : NcToCsvCommand = new NcToCsvCommand
-//        ncToCsvCmd.execute(ncToCsvParams)
+      val downloadCmd = new DownloadCommand
+      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
 
-        val tds = new TemperatureDataset
+      val ncToCsvParams = ShellCommand.getParams(ds.activeLocalSources, shell.sourcesCommandLineParams)
 
-//        tds.saveAsDelta()
-      }
+      println(ncToCsvParams)
+      val ncToCsvCmd: NcToCsvCommand = new NcToCsvCommand
+      ncToCsvCmd.execute(ncToCsvParams)
+
+      val tds = new TemperatureDataset
+      tds.saveAsDelta()
     }
+  }
 }

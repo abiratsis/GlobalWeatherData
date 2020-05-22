@@ -34,9 +34,7 @@ class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit va
   }
 
   override def cleanUp: Unit = {
-    dsContext.temperatureActiveSources.foreach{ case (key, path) =>
-      new File(path).delete()
-      new File(path.replace(".csv", ".nc")).delete()
-    }
+    dsContext.temperatureActiveSources.foreach{ case (_, path) => new File(path).delete() }
+    dsContext.temperatureActiveCsvSources.foreach{ case (_, path) => new File(path).delete() }
   }
 }

@@ -5,14 +5,20 @@ import com.abiratsis.gweather.config.Config
 import implicits._
 class DataSourceContext(conf : Config){
   lazy val downloadDirs = Util.ccToMap(conf.dataSources.directories)
-  lazy val downloadSources = Util.ccToMap(conf.dataSources.sources)
+  lazy val downloadSourceUrls = Util.ccToMap(conf.dataSources.sources)
+
+  lazy val activeDownloadSourceUrls = downloadSourceUrls.filterKeys( k => conf.dataSources.activeSources.contains(k) || k == "worldCountriesUrl")
 
   lazy val activeLocalSources = {
-    (downloadSources.filterKeys(k => conf.dataSources.activeSources.contains(k)) +
+    (downloadSourceUrls.filterKeys(k => conf.dataSources.activeSources.contains(k)) +
       ("worldCountriesUrl" -> "worldcities.csv")) join sourcesByDir map{
       case  (k : String, v : Seq[Any]) =>
-        (k, downloadDirs(v(1).toString).toString + "/" + Util.getFileNameFromUrl(v(0).toString) replace (".nc", ".csv"))
+        (k, downloadDirs(v(1).toString).toString + "/" + Util.getFileNameFromUrl(v(0).toString))
     }
+  }
+
+  lazy val activeLocalCsvSources = {
+    activeLocalSources.mapValues(_ replace (".nc", ".csv"))
   }
 
   lazy val temperatureSourceKeys = Seq(
@@ -24,6 +30,10 @@ class DataSourceContext(conf : Config){
 
   lazy val temperatureActiveSources = {
     activeLocalSources.filterKeys(temperatureSourceKeys.contains(_))
+  }
+
+  lazy val temperatureActiveCsvSources = {
+    activeLocalCsvSources.filterKeys(temperatureSourceKeys.contains(_))
   }
 
   val sourcesByDir = Map(
