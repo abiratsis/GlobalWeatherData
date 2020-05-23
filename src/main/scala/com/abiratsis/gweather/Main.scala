@@ -3,7 +3,7 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.{HumidityDataset, TemperatureDataset}
+import com.abiratsis.gweather.spark.{HumidityDataset, TemperatureDataset, WindDataset}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
@@ -54,7 +54,10 @@ object Main extends App {
 //      tds.saveAsDelta()
 
       val hdt = new HumidityDataset()
-      hdt.load().show()
+//      hdt.load().show()
+
+      val wdt = new WindDataset()
+      wdt.load().show()
     }
   }
 }

@@ -29,27 +29,25 @@ class DataSourceContext(conf : Config){
     "minTemperatureUrl"
   )
 
-  lazy val temperatureActiveSources = {
-    activeLocalSources.filterKeys(temperatureSourceKeys.contains(_))
-  }
+  lazy val temperatureActiveSources = activeLocalSources.filterKeys(temperatureSourceKeys.contains(_))
 
-  lazy val temperatureActiveCsvSources = {
-    activeLocalCsvSources.filterKeys(temperatureSourceKeys.contains(_))
-  }
+  lazy val temperatureActiveCsvSources = activeLocalCsvSources.filterKeys(temperatureSourceKeys.contains(_))
 
   /************************* Humidity ************************/
 
-  lazy val humiditySourceKeys = Seq(
-    "humidityUrl"
-  )
+  lazy val humiditySourceKeys = Seq("humidityUrl")
 
-  lazy val humidityActiveSources = {
-    activeLocalSources.filterKeys(humiditySourceKeys.contains(_))
-  }
+  lazy val humidityActiveSources = activeLocalSources.filterKeys(humiditySourceKeys.contains(_))
 
-  lazy val humidityActiveCsvSources = {
-    activeLocalCsvSources.filterKeys(humiditySourceKeys.contains(_))
-  }
+  lazy val humidityActiveCsvSources = activeLocalCsvSources.filterKeys(humiditySourceKeys.contains(_))
+
+  /************************* Wind ************************/
+
+  lazy val windSourceKeys = Seq("uwindUrl", "vwindUrl")
+
+  lazy val windActiveSources = activeLocalSources.filterKeys(windSourceKeys.contains(_))
+
+  lazy val windActiveCsvSources = activeLocalCsvSources.filterKeys(windSourceKeys.contains(_))
 
   val sourcesByDir = Map(
     "airTemperatureUrl" -> "temperatureDir",
