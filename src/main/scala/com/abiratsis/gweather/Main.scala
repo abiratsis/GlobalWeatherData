@@ -3,7 +3,7 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.TemperatureDataset
+import com.abiratsis.gweather.spark.{HumidityDataset, TemperatureDataset}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
@@ -42,16 +42,19 @@ object Main extends App {
       val mergedSourcesParams = ShellCommand.getParams(ds.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
       val downloadCmd = new DownloadCommand
-      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
+//      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
 
       val ncToCsvParams = ShellCommand.getParams(ds.activeLocalSources, shell.sourcesCommandLineParams)
 
-      println(ncToCsvParams)
+//      println(ncToCsvParams)
       val ncToCsvCmd: NcToCsvCommand = new NcToCsvCommand
-      ncToCsvCmd.execute(ncToCsvParams)
+//      ncToCsvCmd.execute(ncToCsvParams)
 
       val tds = new TemperatureDataset
-      tds.saveAsDelta()
+//      tds.saveAsDelta()
+
+      val hdt = new HumidityDataset()
+      hdt.load().show()
     }
   }
 }

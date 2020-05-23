@@ -21,6 +21,7 @@ class DataSourceContext(conf : Config){
     activeLocalSources.mapValues(_ replace (".nc", ".csv"))
   }
 
+  /************************* Temperature ************************/
   lazy val temperatureSourceKeys = Seq(
     "airTemperatureUrl",
     "skinTemperatureUrl",
@@ -34,6 +35,20 @@ class DataSourceContext(conf : Config){
 
   lazy val temperatureActiveCsvSources = {
     activeLocalCsvSources.filterKeys(temperatureSourceKeys.contains(_))
+  }
+
+  /************************* Humidity ************************/
+
+  lazy val humiditySourceKeys = Seq(
+    "humidityUrl"
+  )
+
+  lazy val humidityActiveSources = {
+    activeLocalSources.filterKeys(humiditySourceKeys.contains(_))
+  }
+
+  lazy val humidityActiveCsvSources = {
+    activeLocalCsvSources.filterKeys(humiditySourceKeys.contains(_))
   }
 
   val sourcesByDir = Map(
