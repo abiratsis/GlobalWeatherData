@@ -10,5 +10,5 @@ class HumidityDataset(implicit val dsContext : DataSourceContext, implicit val s
 
   override val netCDFFields: Map[String, String] = Map(
     "humidityUrl" -> "shum"
-  )
+  ).filterKeys(csvSources.keySet)
 }

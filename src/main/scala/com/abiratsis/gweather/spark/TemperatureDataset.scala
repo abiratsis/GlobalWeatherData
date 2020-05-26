@@ -14,5 +14,5 @@ class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit va
     "skinTemperatureUrl" -> "skt",
     "maxTemperatureUrl" -> "tmax",
     "minTemperatureUrl" -> "tmin"
-  )
+  ).filterKeys(csvSources.keySet)
 }

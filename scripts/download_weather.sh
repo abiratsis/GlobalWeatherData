@@ -190,7 +190,7 @@ nc_to_csv() {
 
   # Downward Solar Radiation Flux
   if [ -n "$dswrf_path" ]; then
-    python3 "${cdir}/scripts/nc_to_csv.py" "$dlwrf_path" "dlwrf"
+    python3 "${cdir}/scripts/nc_to_csv.py" "$dswrf_path" "dswrf"
     echo "${dswrf_path} was successfully converted to csv."
   fi
 

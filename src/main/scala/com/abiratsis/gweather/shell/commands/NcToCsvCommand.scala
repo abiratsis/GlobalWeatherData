@@ -1,7 +1,5 @@
 package com.abiratsis.gweather.shell.commands
 
-import com.abiratsis.gweather.common.{Util, implicits}
-
 /**
  * Handles the .nc to .csv conversion of the data.
  */

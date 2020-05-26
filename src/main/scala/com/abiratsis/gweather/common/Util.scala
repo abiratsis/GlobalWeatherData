@@ -8,7 +8,7 @@ object Util {
    * Converts case classes to map, taken from https://gist.github.com/lauris/7dc94fb29804449b1836#file-cctomap-scala
    *
    * @param cc The case class
-   * @return A map that contains the
+   * @return The map that contains the class members
    */
   def ccToMap(cc: AnyRef) =
     (Map[String, Any]() /: cc.getClass.getDeclaredFields) {

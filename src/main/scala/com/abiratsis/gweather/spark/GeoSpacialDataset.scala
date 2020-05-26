@@ -44,12 +44,14 @@ trait GeoSpacialDataset {
       toWeatherData(netCDFFields.values.toSeq: _*)
     }
   }
+//  "clearSkyDownwardSolarUrl" -> "csdsf"
+//  "netShortwaveRadiationUrl" -> "nswrs"
 
   /**
    * Removes .nc and .csv files. The method is called after saveAsDelta has succeeded.
    */
   def cleanUp: Unit = {
-    dsContext.temperatureActiveSources.foreach{ case (_, path) => new File(path).delete() }
+    csvSources.foreach{ case (_, path) => new File(path).delete() }
     netCDFSources.foreach{ case (_, path) => new File(path).delete() }
   }
 

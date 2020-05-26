@@ -18,5 +18,5 @@ class WindDataset(implicit val dsContext : DataSourceContext, implicit val spark
   override val netCDFFields: Map[String, String] = Map(
     "uwindUrl" -> "uwnd",
     "vwindUrl" -> "vwnd"
-  )
+  ).filterKeys(csvSources.keySet)
 }
