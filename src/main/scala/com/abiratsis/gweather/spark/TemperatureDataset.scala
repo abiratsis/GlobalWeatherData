@@ -4,7 +4,7 @@ import com.abiratsis.gweather.common.DataSourceContext
 import org.apache.spark.sql.SparkSession
 
 class TemperatureDataset(implicit val dsContext : DataSourceContext, implicit val spark: SparkSession)
-  extends GeoSpacialDataset {
+  extends WeatherDataset {
   override val deltaDestination: String = dsContext.downloadDirs("temperatureDir") + "/merged"
   override val csvSources: Map[String, String] = dsContext.temperatureActiveCsvSources
   override val netCDFSources: Map[String, String] = dsContext.temperatureActiveSources

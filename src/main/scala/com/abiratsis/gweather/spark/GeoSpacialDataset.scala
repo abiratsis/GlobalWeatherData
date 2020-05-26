@@ -6,11 +6,10 @@ import com.abiratsis.gweather.common.DataSourceContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{col, expr, month}
 
-trait GeoSpacialDataset {
+private trait GeoSpacialDataset {
   val dsContext: DataSourceContext
   val spark: SparkSession
   val csvSources : Map[String, String]
-  val netCDFSources : Map[String, String]
 
   /**
    * The path where the Delta table will be extracted which is a directory for each of the weather components
@@ -19,41 +18,16 @@ trait GeoSpacialDataset {
   val deltaDestination: String
 
   /**
-   * The value field in the netCDF file.
-   */
-  val netCDFFields: Map[String, String]
-
-  /**
    * Loads and joins together all the datasets of one weather component i.e temperature.
    *
    * @return The dataset that contains the joined data.
    */
-  def load(): DataFrame = {
-    import implicits._
-
-    val commonCols = Seq("time", "lon", "lat")
-    this.csvSources.map {
-      case (_, v) =>
-        spark.read
-          .option("header", "true")
-          .csv(v)
-    }.reduce {
-      (df1, df2) =>
-        df1.join(df2, commonCols, "inner").drop(commonCols.map(c => df2(c)))
-    }.transform {
-      toWeatherData(netCDFFields.values.toSeq: _*)
-    }
-  }
-//  "clearSkyDownwardSolarUrl" -> "csdsf"
-//  "netShortwaveRadiationUrl" -> "nswrs"
+  def load(): DataFrame
 
   /**
    * Removes .nc and .csv files. The method is called after saveAsDelta has succeeded.
    */
-  def cleanUp: Unit = {
-    csvSources.foreach{ case (_, path) => new File(path).delete() }
-    netCDFSources.foreach{ case (_, path) => new File(path).delete() }
-  }
+  def cleanUp= csvSources.foreach{ case (_, path) => new File(path).delete() }
 
   /**
    * Save data as Delta table.
@@ -70,20 +44,13 @@ trait GeoSpacialDataset {
   /**
    * Transforms the underlying dataframe into a GeoSpacial dataframe.
    *
-   * @param cols
+   *
    * @return A dataframe that contains geo-spacial columns.
    */
-  protected def toWeatherData(cols: String*): DataFrame => DataFrame = {
-    val wcols = cols.map { c => col(c).cast("double").as(c) }
-
+  protected def toGeoData(): DataFrame => DataFrame = {
     df =>
       df.withColumn("lon", col("lon").cast("Decimal(24,20)"))
         .withColumn("lat", col("lat").cast("Decimal(24,20)"))
         .withColumn("geom", expr("ST_Point(lon, lat)"))
-        .withColumn("date", col("time").cast("date"))
-        .withColumn("month", month(col("date")))
-        .select((Seq(col("date"), col("month"), col("geom"), col("lon"), col("lat")) ++ wcols): _*)
-        .repartition(col("month"))
-        .cache
   }
 }
