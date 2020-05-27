@@ -12,8 +12,8 @@ class DataSourceContext(conf : Config){
   lazy val activeLocalSources = {
     (downloadSourceUrls.filterKeys(k => conf.dataSources.activeSources.contains(k)) +
       ("worldCountriesUrl" -> "worldcities.csv")) join sourcesByDir map{
-      case  (k : String, v : Seq[Any]) =>
-        (k, downloadDirs(v(1).toString).toString + "/" + Util.getFileNameFromUrl(v(0).toString))
+      case  (k : String, v : Seq[_]) =>
+        (k, downloadDirs(v.last.toString) + "/" + Util.getFileNameFromUrl(v.head.toString))
     }
   }
 
@@ -63,6 +63,15 @@ class DataSourceContext(conf : Config){
   lazy val solarActiveSources = activeLocalSources.filterKeys(solarSourceKeys.contains)
 
   lazy val solarActiveCsvSources = activeLocalCsvSources.filterKeys(solarSourceKeys.contains)
+
+  /************************* World ************************/
+  lazy val worldCountriesSourceKeys = Set(
+    "worldCountriesUrl"
+  )
+
+  lazy val worldCountriesActiveSources = activeLocalSources.filterKeys(worldCountriesSourceKeys.contains)
+
+  lazy val worldCountriesActiveCsvSources = activeLocalCsvSources.filterKeys(worldCountriesSourceKeys.contains)
 
   val sourcesByDir = Map(
     "airTemperatureUrl" -> "temperatureDir",

@@ -3,24 +3,25 @@ package com.abiratsis.gweather.spark
 import java.io.File
 
 import com.abiratsis.gweather.common.DataSourceContext
+import org.apache.spark.sql.functions.{col, expr}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{col, expr, month}
 
-private trait GeoSpacialDataset {
+private[spark] trait GeoSpacialDataset {
+
   val dsContext: DataSourceContext
   val spark: SparkSession
   val csvSources : Map[String, String]
 
   /**
-   * The path where the Delta table will be extracted which is a directory for each of the weather components
+   * The path where the Delta table will be extracted which is a directory for each weather component
    * i.e /weather/temperature/merged or /weather/humidity/merged
    */
   val deltaDestination: String
 
   /**
-   * Loads and joins together all the datasets of one weather component i.e temperature.
+   * Loads the GeoSpacial dataset.
    *
-   * @return The dataset that contains the joined data.
+   * @return The dataset
    */
   def load(): DataFrame
 

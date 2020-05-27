@@ -3,7 +3,7 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset}
+import com.abiratsis.gweather.spark.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset, WorldDataset}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
@@ -42,28 +42,28 @@ object Main extends App {
       val mergedSourcesParams = ShellCommand.getParams(ds.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
       val downloadCmd = new DownloadCommand
-      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
+//      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
 
       val ncToCsvParams = ShellCommand.getParams(ds.activeLocalSources, shell.sourcesCommandLineParams)
 
 //      println(ncToCsvParams)
       val ncToCsvCmd: NcToCsvCommand = new NcToCsvCommand
-      ncToCsvCmd.execute(ncToCsvParams)
+//      ncToCsvCmd.execute(ncToCsvParams)
 
       val tds = new TemperatureDataset
-      tds.saveAsDelta()
+//      tds.saveAsDelta()
 
       val hds = new HumidityDataset()
-      hds.saveAsDelta()
+//      hds.saveAsDelta()
 
       val wds = new WindDataset()
-      wds.saveAsDelta()
+//      wds.saveAsDelta()
 
       val sdt = new SolarDataset()
-      sdt.saveAsDelta()
+//      sdt.saveAsDelta()
 
-//  "clearSkyDownwardSolarUrl" -> "csdsf"
-//  "netShortwaveRadiationUrl" -> "nswrs"
+      val wrds = new WorldDataset()
+//      wrds.saveAsDelta()
     }
   }
 }

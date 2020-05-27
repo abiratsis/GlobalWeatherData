@@ -72,7 +72,7 @@ object ShellCommand{
    */
   def getParams(configParams : Map[String, Any], cmdParams : Map[String, Any]) : Seq[String] ={
       configParams.join(cmdParams)
-      .mapValues(p => s"""${p(1)} "${p(0)}"""")
+      .mapValues(p => s"""${p.last} "${p.head}"""")
       .values
       .toList
   }

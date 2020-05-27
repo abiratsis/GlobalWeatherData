@@ -26,21 +26,22 @@ object Util {
   def getFileNameFromUrl(url : String) : String  = {
     Paths.get(url).getFileName.toString
   }
-
 }
 
 object implicits {
-  implicit class MapExt[A, B, C](val left: immutable.Map[A, B]) {
-    def join(right: immutable.Map[A, C]) : immutable.Map[A, Seq[_]] = {
+  type A = Any
+  implicit class MapExt[K, B <: A, C <: A](val left: immutable.Map[K, B]) {
+    def join(right: immutable.Map[K, C]) : immutable.Map[K, Seq[A]] = {
       val inter = left.keySet.intersect(right.keySet)
 
-      val leftFiltered =  left.filterKeys{inter.contains(_)}
-      val rightFiltered = right.filterKeys{inter.contains(_)}
+      val leftFiltered =  left.filterKeys{inter.contains}
+      val rightFiltered = right.filterKeys{inter.contains}
 
-      (leftFiltered.toSeq ++ rightFiltered.toSeq).groupBy(_._1).mapValues(_.map{_._2})
+      (leftFiltered.toSeq ++ rightFiltered.toSeq)
+        .groupBy(_._1)
+        .mapValues(_.map{_._2}.toList)
+
+      //.mapValues(s => (s(0).asInstanceOf[B], s(1).asInstanceOf[C]))
     }
   }
-
-
 }
-

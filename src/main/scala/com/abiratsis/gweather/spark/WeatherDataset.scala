@@ -5,7 +5,7 @@ import java.io.File
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
 
-private trait WeatherDataset extends GeoSpacialDataset {
+private[spark] trait WeatherDataset extends GeoSpacialDataset {
   val netCDFSources : Map[String, String]
 
   /**
