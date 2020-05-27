@@ -8,7 +8,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 
 private[spark] trait GeoSpacialDataset {
 
-  val dsContext: DataSourceContext
+  val dsCtx: DataSourceContext
   val spark: SparkSession
   val csvSources : Map[String, String]
 

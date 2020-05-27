@@ -1,7 +1,8 @@
-package com.abiratsis.gweather.spark
+package com.abiratsis.gweather.spark.weather
 
 import java.io.File
 
+import com.abiratsis.gweather.spark.{GeoSpacialDataset, implicits}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
 

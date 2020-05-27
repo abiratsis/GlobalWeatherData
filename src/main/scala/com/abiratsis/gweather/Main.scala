@@ -3,7 +3,8 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset, WorldDataset}
+import com.abiratsis.gweather.spark.weather.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset}
+import com.abiratsis.gweather.spark.WorldDataset
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
@@ -64,6 +65,13 @@ object Main extends App {
 
       val wrds = new WorldDataset()
 //      wrds.saveAsDelta()
+
+      val pipeline = new Pipeline()
+      val resDf = pipeline.getMergedWeatherData()
+
+      println("join count:" + resDf.count())
+
+      resDf.show()
     }
   }
 }
