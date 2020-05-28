@@ -1,6 +1,8 @@
 package com.abiratsis.gweather
 
 import com.abiratsis.gweather.common.DataSourceContext
+import com.abiratsis.gweather.spark.implicits._
+
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
 import com.abiratsis.gweather.spark.weather.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset}
@@ -35,6 +37,7 @@ object Main extends App {
   conf match {
     case Left(ex) => println(ex)
     case Right(c) => {
+      import com.abiratsis.gweather.spark.implicits
       implicit val ds = DataSourceContext(c)
       val shell = ShellCommand
 
@@ -61,15 +64,12 @@ object Main extends App {
 //      wds.saveAsDelta()
 
       val sdt = new SolarDataset()
-//      sdt.saveAsDelta()
 
       val wrds = new WorldDataset()
-//      wrds.saveAsDelta()
+      wrds.load().show()
 
       val pipeline = new Pipeline()
-      pipeline.mergeWeatherData()
+//      pipeline.mergeAndCreateWeatherTable().show()
     }
-
-      //test commit
   }
 }

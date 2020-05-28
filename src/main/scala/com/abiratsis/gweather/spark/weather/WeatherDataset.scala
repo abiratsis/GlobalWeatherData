@@ -2,8 +2,9 @@ package com.abiratsis.gweather.spark.weather
 
 import java.io.File
 
+import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.spark.{GeoSpacialDataset, implicits}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{col, month}
 
 private[spark] trait WeatherDataset extends GeoSpacialDataset {
@@ -62,4 +63,48 @@ private[spark] trait WeatherDataset extends GeoSpacialDataset {
         .repartition(col("month"))
         .cache
   }
+}
+
+object WeatherDataset {
+  def mergeAndCreateWeatherTable(dsCtx: DataSourceContext, spark: SparkSession) = {
+    val tempDf = spark.read
+      .format("delta")
+      .load(dsCtx.downloadDirs("temperatureDir") + "/merged")
+      .cache()
+
+    val humDf = spark.read
+      .format("delta")
+      .load(dsCtx.downloadDirs("humidityDir") + "/merged")
+      .cache()
+
+    val windDf = spark.read
+      .format("delta")
+      .load(dsCtx.downloadDirs("windDir") + "/merged")
+      .cache()
+
+    val solarDf = spark.read
+      .format("delta")
+      .load(dsCtx.downloadDirs("solarRadiationDir") + "/merged")
+      .cache()
+
+    val tempCount = tempDf.count()
+    assert(tempCount == windDf.count())
+    assert(tempCount == humDf.count())
+    //assert(tempCount == solarDf.count())
+
+    import com.abiratsis.gweather.spark.implicits._
+
+    val dropCols = Seq("geom", "month")
+    val joinCols = Seq("date", "lon", "lat")
+
+    val weatherDf = tempDf.join(windDf, joinCols, "inner")
+      .join(solarDf, joinCols, "inner")
+      .join(humDf, joinCols, "inner")
+      .drop(dropCols.toCol(windDf, solarDf, humDf))
+      .cache()
+
+    weatherDf.createOrReplaceGlobalTempView("weather_tbl")
+    weatherDf
+  }
+
 }
