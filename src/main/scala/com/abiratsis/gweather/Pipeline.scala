@@ -5,7 +5,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class Pipeline(implicit val dsCtx: DataSourceContext, implicit val spark: SparkSession) {
 
-  def getMergedWeatherData() : DataFrame = {
+  def mergeWeatherData() : Unit = {
     val tempDf = spark.read
       .format("delta")
       .load(dsCtx.downloadDirs("temperatureDir") + "/merged")
@@ -39,6 +39,7 @@ class Pipeline(implicit val dsCtx: DataSourceContext, implicit val spark: SparkS
       .join(solarDf, cols, "inner")
       .join(humDf, cols, "inner")
       .cache()
+      .createOrReplaceGlobalTempView("weather_tbl")
   }
 
 }

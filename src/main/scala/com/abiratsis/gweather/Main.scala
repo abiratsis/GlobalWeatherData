@@ -67,11 +67,7 @@ object Main extends App {
 //      wrds.saveAsDelta()
 
       val pipeline = new Pipeline()
-      val resDf = pipeline.getMergedWeatherData()
-
-      println("join count:" + resDf.count())
-
-      resDf.show()
+      pipeline.mergeWeatherData()
     }
   }
 }
