@@ -69,5 +69,7 @@ object Main extends App {
       val pipeline = new Pipeline()
       pipeline.mergeWeatherData()
     }
+
+      //test commit
   }
 }
