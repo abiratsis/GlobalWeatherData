@@ -9,7 +9,10 @@ object Config{
 
 case class Config(dataSources: DataSources)
 
-case class DataSources(activeSources: Set[String], sources: DataSource, directories: Directories)
+case class DataSources( rootDir: String,
+                        activeSources: Set[String],
+                        sources: DataSource,
+                        directories: Directories)
 
 case class DataSource(airTemperatureUrl: String,
                        skinTemperatureUrl: String,

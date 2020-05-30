@@ -2,6 +2,8 @@ package com.abiratsis.gweather.common
 
 import com.abiratsis.gweather.common.implicits._
 import com.abiratsis.gweather.config.Config
+import org.apache.spark.sql.SparkSession
+import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
 class DataSourceContext(conf : Config){
   lazy val downloadDirs = Util.ccToMap(conf.dataSources.directories)
@@ -21,58 +23,6 @@ class DataSourceContext(conf : Config){
     activeLocalSources.mapValues(_ replace (".nc", ".csv"))
   }
 
-  /************************* Temperature ************************/
-  lazy val temperatureSourceKeys = Set(
-    "airTemperatureUrl",
-    "skinTemperatureUrl",
-    "maxTemperatureUrl" ,
-    "minTemperatureUrl"
-  )
-
-  lazy val temperatureActiveSources = activeLocalSources.filterKeys(temperatureSourceKeys.contains)
-
-  lazy val temperatureActiveCsvSources = activeLocalCsvSources.filterKeys(temperatureSourceKeys.contains)
-
-  /************************* Humidity ************************/
-
-  lazy val humiditySourceKeys = Set("humidityUrl")
-
-  lazy val humidityActiveSources = activeLocalSources.filterKeys(humiditySourceKeys.contains)
-
-  lazy val humidityActiveCsvSources = activeLocalCsvSources.filterKeys(humiditySourceKeys.contains)
-
-  /************************* Wind ************************/
-
-  lazy val windSourceKeys = Set("uwindUrl", "vwindUrl")
-
-  lazy val windActiveSources = activeLocalSources.filterKeys(windSourceKeys.contains)
-
-  lazy val windActiveCsvSources = activeLocalCsvSources.filterKeys(windSourceKeys.contains)
-
-  /************************* Solar ************************/
-
-  lazy val solarSourceKeys = Set(
-    "clearSkyDownwardLongWaveUrl",
-    "clearSkyDownwardSolarUrl",
-    "downwardLongwaveRadiationUrl",
-    "downwardSolarRadiationUrl",
-    "netLongwaveRadiationUrl",
-    "netShortwaveRadiationUrl"
-  )
-
-  lazy val solarActiveSources = activeLocalSources.filterKeys(solarSourceKeys.contains)
-
-  lazy val solarActiveCsvSources = activeLocalCsvSources.filterKeys(solarSourceKeys.contains)
-
-  /************************* World ************************/
-  lazy val worldCountriesSourceKeys = Set(
-    "worldCountriesUrl"
-  )
-
-  lazy val worldCountriesActiveSources = activeLocalSources.filterKeys(worldCountriesSourceKeys.contains)
-
-  lazy val worldCountriesActiveCsvSources = activeLocalCsvSources.filterKeys(worldCountriesSourceKeys.contains)
-
   val sourcesByDir = Map(
     "airTemperatureUrl" -> "temperatureDir",
     "skinTemperatureUrl" -> "temperatureDir",
@@ -89,8 +39,28 @@ class DataSourceContext(conf : Config){
     "netShortwaveRadiationUrl" -> "solarRadiationDir",
     "worldCountriesUrl" -> "worldDir"
   )
+
+  lazy val spark = SparkSession
+    .builder()
+    .appName("test")
+    .master("local[*]")
+    .config("spark.executor.memory", "6g")
+    .config("spark.driver.memory", "2g")
+    .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
+    .config("geospark.global.index", "true")
+    .config("geospark.global.indextype", "quadtree")
+    .config("geospark.join.gridtype", "kdbtree")
+    .getOrCreate()
 }
 
 object DataSourceContext {
-  def apply(conf : Config): DataSourceContext = new DataSourceContext(conf)
+  def apply(conf : Config): DataSourceContext = {
+    val ctx = new DataSourceContext(conf)
+
+    ctx.spark.sparkContext.setLogLevel("WARN")
+    GeoSparkSQLRegistrator.registerAll(ctx.spark)
+
+    ctx
+  }
 }

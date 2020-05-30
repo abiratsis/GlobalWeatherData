@@ -3,17 +3,14 @@ package com.abiratsis.gweather.spark.weather
 import java.io.File
 
 import com.abiratsis.gweather.common.DataSourceContext
-import com.abiratsis.gweather.spark.{GeoSpacialDataset, implicits}
+import com.abiratsis.gweather.spark.{GeoDataset, implicits}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{col, month}
 
-private[spark] trait WeatherDataset extends GeoSpacialDataset {
-  val netCDFSources : Map[String, String]
+private[spark] trait WeatherDataset extends GeoDataset {
 
-  /**
-   * The value field in the netCDF file.
-   */
-  val netCDFFields: Map[String, String]
+  val netCDFSources : Map[String, String]
+  val netCDFFields : Map[String, String]
 
   /**
    * Joins together all the datasets of a specific weather component i.e temperature.
@@ -66,26 +63,11 @@ private[spark] trait WeatherDataset extends GeoSpacialDataset {
 }
 
 object WeatherDataset {
-  def mergeAndCreateWeatherTable(dsCtx: DataSourceContext, spark: SparkSession) = {
-    val tempDf = spark.read
-      .format("delta")
-      .load(dsCtx.downloadDirs("temperatureDir") + "/merged")
-      .cache()
-
-    val humDf = spark.read
-      .format("delta")
-      .load(dsCtx.downloadDirs("humidityDir") + "/merged")
-      .cache()
-
-    val windDf = spark.read
-      .format("delta")
-      .load(dsCtx.downloadDirs("windDir") + "/merged")
-      .cache()
-
-    val solarDf = spark.read
-      .format("delta")
-      .load(dsCtx.downloadDirs("solarRadiationDir") + "/merged")
-      .cache()
+  def mergeAndCreateWeatherTable()(implicit dsCtx: DataSourceContext): DataFrame = {
+    val tempDf = TemperatureDataset().load()
+    val humDf = HumidityDataset().load()
+    val windDf = WindDataset().load()
+    val solarDf = SolarDataset().load()
 
     val tempCount = tempDf.count()
     assert(tempCount == windDf.count())
@@ -103,7 +85,7 @@ object WeatherDataset {
       .drop(dropCols.toCol(windDf, solarDf, humDf))
       .cache()
 
-    weatherDf.createOrReplaceGlobalTempView("weather_tbl")
+    weatherDf.createOrReplaceTempView("weather_tbl")
     weatherDf
   }
 

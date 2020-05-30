@@ -2,11 +2,10 @@ package com.abiratsis.gweather
 
 import com.abiratsis.gweather.common.DataSourceContext
 import com.abiratsis.gweather.spark.implicits._
-
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.weather.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset}
-import com.abiratsis.gweather.spark.WorldDataset
+import com.abiratsis.gweather.spark.weather.{HumidityDataset, SolarDataset, TemperatureDataset, WeatherDataset, WindDataset}
+import com.abiratsis.gweather.spark.{WeatherAtLocationMatcher, WorldDataset}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
@@ -17,27 +16,9 @@ object Main extends App {
 
   implicit val conf = Config.current
 
-  implicit val spark = SparkSession
-    .builder()
-    .appName("test")
-    .master("local[*]")
-    .config("spark.executor.memory", "6g")
-    .config("spark.driver.memory", "2g")
-    .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
-    .config("geospark.global.index", "true")
-    .config("geospark.global.indextype", "quadtree")
-    .config("geospark.join.gridtype", "kdbtree")
-    .getOrCreate()
-
-  spark.sparkContext.setLogLevel("WARN")
-
-  GeoSparkSQLRegistrator.registerAll(spark)
-
   conf match {
     case Left(ex) => println(ex)
     case Right(c) => {
-      import com.abiratsis.gweather.spark.implicits
       implicit val ds = DataSourceContext(c)
       val shell = ShellCommand
 
@@ -54,22 +35,31 @@ object Main extends App {
       val ncToCsvCmd: NcToCsvCommand = new NcToCsvCommand
 //      ncToCsvCmd.execute(ncToCsvParams)
 
-      val tds = new TemperatureDataset
+//      val tds = new TemperatureDataset
 //      tds.saveAsDelta()
 
-      val hds = new HumidityDataset()
+      val hds = HumidityDataset()
 //      hds.saveAsDelta()
 
-      val wds = new WindDataset()
+      val wds = WindDataset()
 //      wds.saveAsDelta()
 
-      val sdt = new SolarDataset()
+      val sdt = SolarDataset()
+//      sdt.saveAsDelta()
 
-      val wrds = new WorldDataset()
-      wrds.load().show()
+      val wrds = WorldDataset()
+//      wrds.saveAsDelta()
 
-      val pipeline = new Pipeline()
+//      val pipeline = new Pipeline()
 //      pipeline.mergeAndCreateWeatherTable().show()
+//      val weatherDf = WeatherDataset.mergeAndCreateWeatherTable(ds, spark)
+//      weatherDf.show()
+
+      val weatherDf = WeatherDataset.mergeAndCreateWeatherTable()
+      weatherDf.show()
+//      WorldDataset.createWorldTable(ds, spark)
+//      val finalDf = new WeatherAtLocationMatcher
+//      finalDf.save()
     }
   }
 }
