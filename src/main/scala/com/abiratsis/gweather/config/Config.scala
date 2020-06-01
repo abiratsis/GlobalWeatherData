@@ -7,10 +7,11 @@ object Config{
   val current = ConfigSource.default.load[Config]
 }
 
-case class Config(dataSources: DataSources)
+case class Config(global: Global, dataSources: DataSources)
 
-case class DataSources( rootDir: String,
-                        activeSources: Set[String],
+case class Global(rootDir: String, geoSparkDistance: Int)
+
+case class DataSources(activeSources: Set[String],
                         sources: DataSource,
                         directories: Directories)
 

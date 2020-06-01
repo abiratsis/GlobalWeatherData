@@ -1,9 +1,8 @@
 package com.abiratsis.gweather.spark
-import java.io.File
 
-import com.abiratsis.gweather.common.DataSourceContext
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import com.abiratsis.gweather.common.{DataSourceContext, Util}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 private[spark] class WorldDataset(val spark: SparkSession)
   extends GeoDataset {
@@ -26,9 +25,9 @@ private[spark] class WorldDataset(val spark: SparkSession)
   override def cleanUp: Unit = {
     super.cleanUp
 
-    new File(s"${WorldDataset.downloadDir}/license.txt").delete()
-    new File(s"${WorldDataset.downloadDir}/worldcities.xlsx").delete()
-    new File(s"${WorldDataset.downloadDir}/simplemaps_worldcities_basicv1.6.zip").delete()
+    Util.deleteFile(s"${WorldDataset.downloadDir}/license.txt")
+    Util.deleteFile(s"${WorldDataset.downloadDir}/worldcities.xlsx")
+    Util.deleteFile(s"${WorldDataset.downloadDir}/simplemaps_worldcities_basicv1.6.zip")
   }
 
   def createWorldTable(): Unit = {

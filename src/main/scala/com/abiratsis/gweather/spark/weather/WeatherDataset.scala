@@ -1,10 +1,8 @@
 package com.abiratsis.gweather.spark.weather
 
-import java.io.File
-
-import com.abiratsis.gweather.common.DataSourceContext
+import com.abiratsis.gweather.common.{DataSourceContext, Util}
 import com.abiratsis.gweather.spark.{GeoDataset, implicits}
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
 
 private[spark] trait WeatherDataset extends GeoDataset {
@@ -41,7 +39,7 @@ private[spark] trait WeatherDataset extends GeoDataset {
    */
   override def cleanUp: Unit = {
     super.cleanUp
-    netCDFSources.foreach{ case (_, path) => new File(path).delete() }
+    netCDFSources.foreach{ case (_, path) => Util.deleteFile(path) }
   }
 
   /**

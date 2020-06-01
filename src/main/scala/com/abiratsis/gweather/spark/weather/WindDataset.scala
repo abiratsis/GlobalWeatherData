@@ -5,7 +5,6 @@ import org.apache.spark.sql.SparkSession
 
 private[spark] class WindDataset(val spark : SparkSession)
   extends WeatherDataset {
-
   val csvSources: Map[String, String] = WindDataset.csvSources
   val netCDFSources: Map[String, String] = WindDataset.netCDFSources
   val netCDFFields: Map[String, String] = WindDataset.netCDFFields
@@ -15,7 +14,7 @@ object WindDataset extends WeatherMetadata{
   var ctx: DataSourceContext = _
 
   def apply()(implicit dsCtx: DataSourceContext): WindDataset = {
-    ctx = dsCtx
+    this.ctx = dsCtx
     new WindDataset(dsCtx.spark)
   }
 

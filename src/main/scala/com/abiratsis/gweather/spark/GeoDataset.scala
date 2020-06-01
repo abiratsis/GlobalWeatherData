@@ -1,7 +1,6 @@
 package com.abiratsis.gweather.spark
 
-import java.io.File
-
+import com.abiratsis.gweather.common.Util
 import org.apache.spark.sql.functions.{col, expr}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -19,7 +18,7 @@ private trait GeoDataset {
   /**
    * Removes .nc and .csv files. The method is called after saveAsDelta has succeeded.
    */
-  def cleanUp= csvSources.foreach{ case (_, path) => new File(path).delete() }
+  def cleanUp= csvSources.foreach{ case (_, path) => Util.deleteFile(path) }
 
   /**
    * Transforms the underlying dataframe into a GeoSpacial dataframe.

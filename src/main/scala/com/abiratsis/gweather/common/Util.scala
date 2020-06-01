@@ -2,6 +2,8 @@ package com.abiratsis.gweather.common
 
 import java.nio.file.Paths
 import scala.collection.immutable
+import scala.reflect.io.Directory
+import java.io.File
 
 object Util {
   /**
@@ -26,6 +28,15 @@ object Util {
   def getFileNameFromUrl(url : String) : String  = {
     Paths.get(url).getFileName.toString
   }
+
+  def deleteDir(dir: String) = {
+    val directory = new Directory(new File(dir))
+
+    if(directory.exists)
+      directory.deleteRecursively()
+  }
+
+  def deleteFile(path: String){}
 }
 
 object implicits {

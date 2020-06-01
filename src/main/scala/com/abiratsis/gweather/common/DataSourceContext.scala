@@ -5,7 +5,7 @@ import com.abiratsis.gweather.config.Config
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
-class DataSourceContext(conf : Config){
+class DataSourceContext(val conf : Config){
   lazy val downloadDirs = Util.ccToMap(conf.dataSources.directories)
   lazy val downloadSourceUrls = Util.ccToMap(conf.dataSources.sources)
 
