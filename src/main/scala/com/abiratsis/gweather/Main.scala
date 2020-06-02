@@ -1,6 +1,6 @@
 package com.abiratsis.gweather
 
-import com.abiratsis.gweather.common.DataSourceContext
+import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.config.Config
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, NcToCsvCommand, ShellCommand}
 import com.abiratsis.gweather.spark.{WeatherAtLocationHandler, WorldDataset}
@@ -16,17 +16,17 @@ object Main extends App {
   conf match {
     case Left(ex) => println(ex)
     case Right(c) => {
-      implicit val ds = DataSourceContext(c)
+      implicit val ctx = GeoWeatherContext(c)
       val shell = ShellCommand
 
-      val mergedDirsParams = ShellCommand.getParams(ds.downloadDirs, shell.dirCommandLineParams)
+      val mergedDirsParams = ShellCommand.getParams(ctx.downloadDirs, shell.dirCommandLineParams)
 
-      val mergedSourcesParams = ShellCommand.getParams(ds.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
+      val mergedSourcesParams = ShellCommand.getParams(ctx.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
       val downloadCmd = new DownloadCommand
 //      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams)
 
-      val ncToCsvParams = ShellCommand.getParams(ds.activeLocalSources, shell.sourcesCommandLineParams)
+      val ncToCsvParams = ShellCommand.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
 
 //      println(ncToCsvParams)
       val ncToCsvCmd: NcToCsvCommand = new NcToCsvCommand
@@ -52,10 +52,12 @@ object Main extends App {
 //      val weatherDf = WeatherDataset.mergeAndCreateWeatherTable(ds, spark)
 //      weatherDf.show()
 
-      val weatherDf = WeatherDataset.mergeAndCreateWeatherTable()
-      val worldDf = WorldDataset().createWorldTable()
-      val finalDf = new WeatherAtLocationHandler()
-      finalDf.save("/Users/abiratsis/Desktop/", "delta")
+//      WeatherDataset.mergeAndCreateWeatherTable()
+//      WorldDataset().createWorldTable()
+//      val finalDf = new WeatherAtLocationHandler()
+//      finalDf.save(ctx.conf.global.rootDir, "csv")
+
+//      println(ctx.conf.global.spark)
     }
   }
 }

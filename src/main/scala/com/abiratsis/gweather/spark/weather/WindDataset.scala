@@ -1,6 +1,6 @@
 package com.abiratsis.gweather.spark.weather
 
-import com.abiratsis.gweather.common.DataSourceContext
+import com.abiratsis.gweather.common.GeoWeatherContext
 import org.apache.spark.sql.SparkSession
 
 private[spark] class WindDataset(val spark : SparkSession)
@@ -11,9 +11,9 @@ private[spark] class WindDataset(val spark : SparkSession)
 }
 
 object WindDataset extends WeatherMetadata{
-  var ctx: DataSourceContext = _
+  var ctx: GeoWeatherContext = _
 
-  def apply()(implicit dsCtx: DataSourceContext): WindDataset = {
+  def apply()(implicit dsCtx: GeoWeatherContext): WindDataset = {
     this.ctx = dsCtx
     new WindDataset(dsCtx.spark)
   }

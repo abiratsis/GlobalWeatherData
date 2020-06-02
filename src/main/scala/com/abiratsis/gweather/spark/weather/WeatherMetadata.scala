@@ -1,10 +1,10 @@
 package com.abiratsis.gweather.spark.weather
 
-import com.abiratsis.gweather.common.DataSourceContext
+import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.spark.GeoMetadata
 
 abstract class WeatherMetadata extends GeoMetadata{
-  var ctx: DataSourceContext
+  var ctx: GeoWeatherContext
 
   /**
    * The netCDF files of the current dataset.

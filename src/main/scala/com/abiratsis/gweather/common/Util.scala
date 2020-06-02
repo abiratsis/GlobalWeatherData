@@ -32,8 +32,18 @@ object Util {
   def deleteDir(dir: String) = {
     val directory = new Directory(new File(dir))
 
-    if(directory.exists)
-      directory.deleteRecursively()
+    if(directory.exists) {
+      println(s"$dir was found. Deleting it...")
+      val res = directory.deleteRecursively()
+
+      if(res)
+        println(s"$dir deleted....")
+      else
+        println(s"$dir deletion failed...")
+    }
+    else{
+      println(s"$dir not found!")
+    }
   }
 
   def deleteFile(path: String){}
@@ -51,8 +61,6 @@ object implicits {
       (leftFiltered.toSeq ++ rightFiltered.toSeq)
         .groupBy(_._1)
         .mapValues(_.map{_._2}.toList)
-
-      //.mapValues(s => (s(0).asInstanceOf[B], s(1).asInstanceOf[C]))
     }
   }
 }

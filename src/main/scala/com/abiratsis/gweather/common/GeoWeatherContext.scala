@@ -5,7 +5,7 @@ import com.abiratsis.gweather.config.Config
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
-class DataSourceContext(val conf : Config){
+class GeoWeatherContext(val conf : Config){
   lazy val downloadDirs = Util.ccToMap(conf.dataSources.directories)
   lazy val downloadSourceUrls = Util.ccToMap(conf.dataSources.sources)
 
@@ -45,7 +45,8 @@ class DataSourceContext(val conf : Config){
     .appName("test")
     .master("local[*]")
     .config("spark.executor.memory", "6g")
-    .config("spark.driver.memory", "2g")
+    .config("spark.driver.memory", "4g")
+    .config("spark.executor.instances", conf.global.spark("spark.executor.instances"))
     .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
     .config("geospark.global.index", "true")
@@ -54,9 +55,9 @@ class DataSourceContext(val conf : Config){
     .getOrCreate()
 }
 
-object DataSourceContext {
-  def apply(conf : Config): DataSourceContext = {
-    val ctx = new DataSourceContext(conf)
+object GeoWeatherContext {
+  def apply(conf : Config): GeoWeatherContext = {
+    val ctx = new GeoWeatherContext(conf)
 
     ctx.spark.sparkContext.setLogLevel("WARN")
     GeoSparkSQLRegistrator.registerAll(ctx.spark)

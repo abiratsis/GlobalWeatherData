@@ -1,6 +1,6 @@
 package com.abiratsis.gweather.spark.weather
 
-import com.abiratsis.gweather.common.{DataSourceContext, Util}
+import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import com.abiratsis.gweather.spark.{GeoDataset, implicits}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
@@ -61,7 +61,7 @@ private[spark] trait WeatherDataset extends GeoDataset {
 }
 
 object WeatherDataset {
-  def mergeAndCreateWeatherTable()(implicit dsCtx: DataSourceContext): DataFrame = {
+  def mergeAndCreateWeatherTable()(implicit dsCtx: GeoWeatherContext): DataFrame = {
     val tempDf = TemperatureDataset().load()
     val humDf = HumidityDataset().load()
     val windDf = WindDataset().load()

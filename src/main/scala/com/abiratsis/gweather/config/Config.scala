@@ -9,7 +9,7 @@ object Config{
 
 case class Config(global: Global, dataSources: DataSources)
 
-case class Global(rootDir: String, geoSparkDistance: Int)
+case class Global(rootDir: String, geoSparkDistance: Int, spark: Map[String, Int])
 
 case class DataSources(activeSources: Set[String],
                         sources: DataSource,
@@ -28,9 +28,7 @@ case class DataSource(airTemperatureUrl: String,
                        downwardSolarRadiationUrl: String,
                        netLongwaveRadiationUrl: String,
                        netShortwaveRadiationUrl: String,
-                       worldCountriesUrl: String){
-
-}
+                       worldCountriesUrl: String)
 
 case class Directories(temperatureDir: String,
                        humidityDir: String,
