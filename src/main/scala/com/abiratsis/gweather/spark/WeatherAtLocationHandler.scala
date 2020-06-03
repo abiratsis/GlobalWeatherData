@@ -45,7 +45,6 @@ class WeatherAtLocationHandler(implicit val ctx: GeoWeatherContext) {
 
     //todo: add year support for the datasources
     val currentYear = currentDate.getYear
-    val currentMonth = currentDate.getMonthValue
 
     val weatherCols =
         TemperatureDataset.netCDFFields.values ++

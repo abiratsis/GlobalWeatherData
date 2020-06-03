@@ -25,7 +25,7 @@ trait ShellCommand {
    * @param params Parameters of the shell command
    * @return The command-line output
    */
-  def execute(params: Seq[String]): String = {
+  def execute(params: String*): String = {
     ShellProxy.exec(this.getExecString(params))
   }
 }
