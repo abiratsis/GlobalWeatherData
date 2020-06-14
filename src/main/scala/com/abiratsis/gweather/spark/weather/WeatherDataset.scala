@@ -61,7 +61,7 @@ private[spark] trait WeatherDataset extends GeoDataset {
 }
 
 object WeatherDataset {
-  def mergeAndCreateWeatherTable()(implicit dsCtx: GeoWeatherContext): DataFrame = {
+  def mergeAndCreateWeatherTable()(implicit context: Option[GeoWeatherContext]): DataFrame = {
     val tempDf = TemperatureDataset().load()
     val humDf = HumidityDataset().load()
     val windDf = WindDataset().load()

@@ -1,7 +1,9 @@
 package com.abiratsis.gweather.shell.commands
 
+import com.abiratsis.gweather.common.Util
 import com.abiratsis.gweather.shell.ShellProxy
 import com.abiratsis.gweather.common.implicits._
+import com.abiratsis.gweather.exceptions.NullOrEmptyArgumentException
 
 trait ShellCommand {
   /**
@@ -17,7 +19,10 @@ trait ShellCommand {
    * @param params Parameters of the shell command
    * @return The shell command to be executed
    */
-  def getExecString(params: Seq[String]): String = s"""$functionName ${params.mkString(" ")}"""
+  def getExecString(params: Seq[String]): String = Util.isNullOrEmpty(params) match {
+    case true => s"$functionName"
+    case _ => s"$functionName ${params.mkString(" ")}"
+  }
 
   /**
    * Executes the shell command.
@@ -70,8 +75,14 @@ object ShellCommand{
    * @param cmdParams
    * @return String Seq that contains the values of the matching pairs.
    */
-  def getParams(configParams : Map[String, Any], cmdParams : Map[String, Any]) : Seq[String] ={
-      configParams.join(cmdParams)
+  def getParams(configParams : Map[String, Any], cmdParams : Map[String, Any]) : Seq[String] = {
+    if (Util.isNullOrEmpty(configParams))
+      throw new NullOrEmptyArgumentException("configParams")
+
+    if (Util.isNullOrEmpty(cmdParams))
+      throw new NullOrEmptyArgumentException("cmdParams")
+
+    configParams.join(cmdParams)
       .mapValues(p => s"""${p.last} "${p.head}"""")
       .values
       .toList

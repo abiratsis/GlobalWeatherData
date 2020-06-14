@@ -4,7 +4,7 @@ import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.spark.GeoMetadata
 
 abstract class WeatherMetadata extends GeoMetadata{
-  var ctx: GeoWeatherContext
+  var geoWeatherCtx: GeoWeatherContext
 
   /**
    * The netCDF files of the current dataset.

@@ -1,6 +1,7 @@
 package com.abiratsis.gweather.common
 
 import java.nio.file.Paths
+
 import scala.collection.immutable
 import scala.reflect.io.Directory
 import java.io.File
@@ -46,7 +47,12 @@ object Util {
     }
   }
 
-  def deleteFile(path: String){}
+  def deleteFile(path: String) = new File(path).delete()
+
+  def isNullOrEmpty[T](s: Iterable[T]) = s match {
+    case null => true
+    case _ => s.toSeq.isEmpty
+  }
 }
 
 object implicits {

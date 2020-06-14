@@ -1,6 +1,7 @@
 package com.abiratsis.gweather.spark.weather
 
 import com.abiratsis.gweather.common.GeoWeatherContext
+import com.abiratsis.gweather.exceptions.NullContextException
 import org.apache.spark.sql.SparkSession
 
 private[spark] class TemperatureDataset(val spark: SparkSession)
@@ -12,21 +13,31 @@ private[spark] class TemperatureDataset(val spark: SparkSession)
 }
 
 object TemperatureDataset extends WeatherMetadata{
-  var ctx: GeoWeatherContext = _
+  var geoWeatherCtx: GeoWeatherContext = _
 
-  def apply()(implicit dsCtx: GeoWeatherContext): TemperatureDataset = {
-    ctx = dsCtx
-    new TemperatureDataset(dsCtx.spark)
+  def apply()(implicit context: Option[GeoWeatherContext]): TemperatureDataset = context match {
+    case Some(ctx) => {
+      this.geoWeatherCtx = ctx
+      new TemperatureDataset(ctx.spark)
+    }
+    case None => throw new NullContextException
   }
 
-  lazy val sourceKeys = Set(
+  val sourceKeys = Set(
     "airTemperatureUrl",
     "skinTemperatureUrl",
     "maxTemperatureUrl",
     "minTemperatureUrl")
 
-  lazy val csvSources: Map[String, String] = ctx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
-  lazy val netCDFSources: Map[String, String] =  ctx.activeLocalSources.filterKeys(sourceKeys.contains)
+  lazy val csvSources: Map[String, String] = Option(geoWeatherCtx) match {
+    case Some(_) => geoWeatherCtx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
+    case None => throw new NullContextException
+  }
+
+  lazy val netCDFSources: Map[String, String] = Option(geoWeatherCtx) match {
+    case Some(_) => geoWeatherCtx.activeLocalSources.filterKeys(sourceKeys.contains)
+    case None => throw new NullContextException
+  }
 
   lazy val netCDFFields: Map[String, String] = Map(
     "airTemperatureUrl" -> "air",

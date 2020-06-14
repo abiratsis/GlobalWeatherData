@@ -1,11 +1,12 @@
 package com.abiratsis.gweather
 
 import com.abiratsis.gweather.common.GeoWeatherContext
+import com.abiratsis.gweather.exceptions.NullContextException
 import com.abiratsis.gweather.shell.commands.{DownloadCommand, InstallPrerequisitesCommand, NcToCsvCommand, ShellCommand}
 import com.abiratsis.gweather.spark.{WeatherAtLocationHandler, WorldDataset}
 import com.abiratsis.gweather.spark.weather.WeatherDataset
 
-class Pipeline(implicit ctx: GeoWeatherContext) {
+class Pipeline(implicit context: Option[GeoWeatherContext]) {
   private val shell = ShellCommand
 
   private def installPrerequisites : Unit = {
@@ -13,26 +14,36 @@ class Pipeline(implicit ctx: GeoWeatherContext) {
     installPrerequisitesCommand.execute()
   }
 
-  private def downloadData : Unit = {
-    val mergedDirsParams = shell.getParams(ctx.downloadDirs, shell.dirCommandLineParams)
-    val mergedSourcesParams = shell.getParams(ctx.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
+  private def downloadData : Unit = context match {
+    case Some(ctx) => {
+      val mergedDirsParams = shell.getParams(ctx.downloadDirs, shell.dirCommandLineParams)
+      val mergedSourcesParams = shell.getParams(ctx.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
-    val downloadCmd = new DownloadCommand()
-    downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams :_*)
+      val downloadCmd = new DownloadCommand()
+      downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams: _*)
+    }
+    case None => throw new NullContextException
   }
 
-  private def convertToCsv : Unit = {
-    val ncToCsvParams = shell.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
+  private def convertToCsv : Unit = context match {
+    case Some(ctx) => {
+      val ncToCsvParams = shell.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
 
-    val ncToCsvCmd = new NcToCsvCommand()
-    ncToCsvCmd.execute(ncToCsvParams:_*)
+      val ncToCsvCmd = new NcToCsvCommand()
+      ncToCsvCmd.execute(ncToCsvParams: _*)
+    }
+    case None => throw new NullContextException
   }
 
-  private def exportGeoWeatherData(format: String) : Unit = {
-    WeatherDataset.mergeAndCreateWeatherTable()
-    WorldDataset().createWorldTable()
-    val finalDf = new WeatherAtLocationHandler()
-    finalDf.save(ctx.conf.global.rootDir, format)
+  private def exportGeoWeatherData(format: String) : Unit = context match {
+    case Some(ctx) => {
+      WeatherDataset.mergeAndCreateWeatherTable()
+      WorldDataset()(ctx).createWorldTable()
+
+      val finalDf = new WeatherAtLocationHandler()(ctx)
+      finalDf.save(ctx.conf.global.rootDir, format)
+    }
+    case None => throw new NullContextException
   }
 
   import ExecStep._
