@@ -6,7 +6,6 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
 
 private[spark] trait WeatherDataset extends GeoDataset {
-
   val netCDFSources : Map[String, String]
   val netCDFFields : Map[String, String]
 

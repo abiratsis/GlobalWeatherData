@@ -5,7 +5,7 @@ import org.apache.spark.sql.functions.{col, expr}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 private trait GeoDataset {
-  val spark: SparkSession
+  protected val spark: SparkSession
   val csvSources : Map[String, String]
 
   /**

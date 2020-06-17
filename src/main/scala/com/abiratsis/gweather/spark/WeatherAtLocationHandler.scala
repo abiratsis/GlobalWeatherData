@@ -47,15 +47,18 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
     val currentYear = currentDate.getYear
 
     val weatherCols =
-        TemperatureDataset.netCDFFields.values ++
+      TemperatureDataset.netCDFFields.values ++
         WindDataset.netCDFFields.values ++
         HumidityDataset.netCDFFields.values ++
         SolarDataset.netCDFFields.values
 
     Util.deleteDir(destination + "geo_weather")
-    val weather_df = getWeatherByLocation(weatherCols.toSeq, ctx.conf.global.geoSparkDistance)
+    var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.conf.global.geoSparkDistance)
 
-    weather_df.write
+    if (ctx.conf.global.weatherTransformations("mergeWinds"))
+      weatherDf = weatherDf.transform(WindDataset.mergeWindSpeed)
+
+    weatherDf.write
       .format(format)
       .option("header", "true")
       .mode("overwrite")

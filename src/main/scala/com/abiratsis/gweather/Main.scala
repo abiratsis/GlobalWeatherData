@@ -2,6 +2,7 @@ package com.abiratsis.gweather
 
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import com.abiratsis.gweather.config.Config
+import com.abiratsis.gweather.spark.weather.WindDataset
 
 //import org.apache.log4j.{Level, Logger}
 

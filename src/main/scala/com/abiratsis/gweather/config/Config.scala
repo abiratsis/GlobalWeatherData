@@ -9,7 +9,12 @@ object Config{
 
 case class Config(global: Global, dataSources: DataSources)
 
-case class Global(rootDir: String, geoSparkDistance: Int, spark: Map[String, Int])
+case class Global(rootDir: String,
+                  geoSparkDistance: Int,
+                  weatherTransformations : Map[String, Boolean],
+                  spark: Map[String, Int])
+
+case class Transformations(mergeWinds : Boolean)
 
 case class DataSources(activeSources: Set[String],
                         sources: DataSource,
