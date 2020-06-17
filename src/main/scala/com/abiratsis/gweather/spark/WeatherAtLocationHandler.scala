@@ -53,10 +53,13 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
         SolarDataset.netCDFFields.values
 
     Util.deleteDir(destination + "geo_weather")
+    
     var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.conf.global.geoSparkDistance)
-
     if (ctx.conf.global.weatherTransformations("mergeWinds"))
       weatherDf = weatherDf.transform(WindDataset.mergeWindSpeed)
+
+    if (ctx.conf.global.weatherTransformations("mergeTemperatures"))
+      weatherDf = weatherDf.transform(TemperatureDataset.mergeTemperatures)
 
     weatherDf.write
       .format(format)
