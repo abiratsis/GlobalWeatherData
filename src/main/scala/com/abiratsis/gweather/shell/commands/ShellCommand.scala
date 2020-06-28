@@ -38,20 +38,20 @@ trait ShellCommand {
 object ShellCommand{
 
   val sourcesCommandLineParams : Map[String, String] = Map(
-    "airTemperatureUrl" -> "--airtemp",
-    "skinTemperatureUrl" ->  "--skintemp",
-    "maxTemperatureUrl" -> "--maxtemp",
-    "minTemperatureUrl" -> "--mintemp",
-    "humidityUrl" -> "--humid",
-    "uwindUrl" -> "--uwind",
-    "vwindUrl" -> "--vwind",
-    "clearSkyDownwardLongWaveUrl" -> "--csdlf",
-    "clearSkyDownwardSolarUrl" -> "--csdsf",
-    "downwardLongwaveRadiationUrl" -> "--dlwrf",
-    "downwardSolarRadiationUrl" -> "--dswrf",
-    "netLongwaveRadiationUrl" -> "--nlwrs",
-    "netShortwaveRadiationUrl" -> "--nswrs",
-    "worldCountriesUrl" -> "--world"
+    "airTemperature" -> "--airtemp",
+    "skinTemperature" ->  "--skintemp",
+    "maxTemperature" -> "--maxtemp",
+    "minTemperature" -> "--mintemp",
+    "humidity" -> "--humid",
+    "uwind" -> "--uwind",
+    "vwind" -> "--vwind",
+    "clearSkyDownwardLongWave" -> "--csdlf",
+    "clearSkyDownwardSolar" -> "--csdsf",
+    "downwardLongwaveRadiation" -> "--dlwrf",
+    "downwardSolarRadiation" -> "--dswrf",
+    "netLongwaveRadiation" -> "--nlwrs",
+    "netShortwaveRadiation" -> "--nswrs",
+    "worldCountries" -> "--world"
   )
 
   val dirCommandLineParams : Map[String, String] = Map(

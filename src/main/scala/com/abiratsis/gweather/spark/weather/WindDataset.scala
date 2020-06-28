@@ -53,7 +53,7 @@ object WindDataset extends WeatherMetadata {
     import spark.implicits._
 
     val windCols = Seq("vwindUrl", "uwindUrl")
-    if (windCols.forall(this.geoWeatherCtx.conf.dataSources.activeSources.contains(_)))
+    if (windCols.forall(this.geoWeatherCtx.userConfig.activeSources.contains(_)))
       df.withColumn("wind_speed", sqrt(pow($"vwnd", 2.0) + pow($"uwnd", 2.0)))
         .drop("vwnd", "uwnd")
     else

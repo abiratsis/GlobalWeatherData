@@ -12,20 +12,28 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
+  //Spark
   "org.apache.spark"     %% "spark-core" % sparkVersion,
   "org.apache.spark"     %% "spark-sql"  % sparkVersion,
   "org.apache.spark"     %% "spark-hive" % sparkVersion,
 
+  //Testing
   "org.scalatest" %% "scalatest" % "3.1.1" % "test",
   "org.scalactic" %% "scalactic" % "3.1.1",
 
+  //Configuration
   "com.github.pureconfig" %% "pureconfig" % "0.12.3",
 
+  //Delta-Lake
   "io.delta" %% "delta-core" % "0.5.0",
 
+  //GeoSpark
   "org.datasyslab" % "geospark-sql_2.3" % "1.3.1",
   "org.datasyslab" % "geospark-viz_2.3" % "1.3.1",
-  "org.datasyslab" % "geospark" % "1.3.1"
+  "org.datasyslab" % "geospark" % "1.3.1",
+
+  //Command-line
+  "org.rogach" %% "scallop" % "3.4.0"
 )
 
 //Compile / packageBin / mappings += {

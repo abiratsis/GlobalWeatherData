@@ -46,20 +46,21 @@ object TemperatureDataset extends WeatherMetadata{
     "minTemperatureUrl" -> "tmin"
   ).filterKeys(csvSources.keySet)
 
-  def mergeTemperatures(df : DataFrame) : DataFrame = {
-    val spark = this.geoWeatherCtx.spark
-    import spark.implicits._
-
+  def mergeMaxMinTemperatures(df : DataFrame) : DataFrame = {
     val tmax_wght = 0.7
     val tmin_wght = 1.0 - tmax_wght
-
     val maxMinCols = Seq("maxTemperatureUrl", "minTemperatureUrl")
-    if (maxMinCols.forall(this.geoWeatherCtx.conf.dataSources.activeSources.contains(_)))
-      df.withColumn("temp", ($"tmin" * tmin_wght) + ($"tmax" * tmax_wght))
+    if (maxMinCols.forall(this.geoWeatherCtx.userConfig.activeSources.contains(_))) {
+      df.withColumn("temp", (df("tmin") * tmin_wght) + (df("tmax") * tmax_wght))
         .drop("tmin", "tmax")
-    else
+    } else
       df
   }
 
+  def convertToCelcious(df : DataFrame) : DataFrame = {
+    netCDFFields.keys.foldLeft(df){
+      case (df, c) => df.withColumn(c, df(c) - 273.15)
+    }
+  }
 
 }

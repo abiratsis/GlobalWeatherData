@@ -1,21 +1,27 @@
 package com.abiratsis.gweather.common
 
+import java.nio.file.Paths
+
 import com.abiratsis.gweather.common.implicits._
-import com.abiratsis.gweather.config.Config
+import com.abiratsis.gweather.config.{ApplicationSettings, UserSettings}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
-class GeoWeatherContext(val conf : Config){
-  lazy val downloadDirs = Util.ccToMap(conf.dataSources.directories)
-  lazy val downloadSourceUrls = Util.ccToMap(conf.dataSources.sources)
+class GeoWeatherContext(val appConfig : ApplicationSettings, val userConfig: UserSettings){
+  lazy val downloadDirs = Util.ccToMap(appConfig.directories).mapValues{
+    case dir : String => Paths.get(userConfig.rootDir, dir).toString
+  }
+  lazy val downloadSourceUrls = Util.ccToMap(appConfig.sourceUrls)
 
-  lazy val activeDownloadSourceUrls = downloadSourceUrls.filterKeys( k => conf.dataSources.activeSources.contains(k) || k == "worldCountriesUrl")
+  lazy val activeDownloadSourceUrls = downloadSourceUrls.filterKeys{k =>
+    userConfig.activeSources.contains(k) || k == "worldCountries"
+  }
 
   lazy val activeLocalSources = {
-    (downloadSourceUrls.filterKeys(k => conf.dataSources.activeSources.contains(k)) +
-      ("worldCountriesUrl" -> "worldcities.csv")) join sourcesByDir map{
+    (downloadSourceUrls.filterKeys(k => userConfig.activeSources.contains(k)) +
+      ("worldCountries" -> "worldcities.csv")) join sourcesByDir map{
       case  (k : String, v : Seq[_]) =>
-        (k, downloadDirs(v.last.toString) + "/" + Util.getFileNameFromUrl(v.head.toString))
+        (k, Paths.get(downloadDirs(v.last.toString), Util.getFileNameFromUrl(v.head.toString)).toString)
     }
   }
 
@@ -24,20 +30,20 @@ class GeoWeatherContext(val conf : Config){
   }
 
   val sourcesByDir = Map(
-    "airTemperatureUrl" -> "temperatureDir",
-    "skinTemperatureUrl" -> "temperatureDir",
-    "maxTemperatureUrl" -> "temperatureDir",
-    "minTemperatureUrl" -> "temperatureDir",
-    "humidityUrl" -> "humidityDir",
-    "uwindUrl" -> "windDir",
-    "vwindUrl" -> "windDir",
-    "clearSkyDownwardLongWaveUrl" -> "solarRadiationDir",
-    "clearSkyDownwardSolarUrl" -> "solarRadiationDir",
-    "downwardLongwaveRadiationUrl" -> "solarRadiationDir",
-    "downwardSolarRadiationUrl" -> "solarRadiationDir",
-    "netLongwaveRadiationUrl" -> "solarRadiationDir",
-    "netShortwaveRadiationUrl" -> "solarRadiationDir",
-    "worldCountriesUrl" -> "worldDir"
+    "airTemperature" -> "temperatureDir",
+    "skinTemperature" -> "temperatureDir",
+    "maxTemperature" -> "temperatureDir",
+    "minTemperature" -> "temperatureDir",
+    "humidity" -> "humidityDir",
+    "uwind" -> "windDir",
+    "vwind" -> "windDir",
+    "clearSkyDownwardLongWave" -> "solarRadiationDir",
+    "clearSkyDownwardSolar" -> "solarRadiationDir",
+    "downwardLongwaveRadiation" -> "solarRadiationDir",
+    "downwardSolarRadiation" -> "solarRadiationDir",
+    "netLongwaveRadiation" -> "solarRadiationDir",
+    "netShortwaveRadiation" -> "solarRadiationDir",
+    "worldCountries" -> "worldDir"
   )
 
   lazy val spark = SparkSession
@@ -46,7 +52,7 @@ class GeoWeatherContext(val conf : Config){
     .master("local[*]")
     .config("spark.executor.memory", "6g")
     .config("spark.driver.memory", "4g")
-    .config("spark.executor.instances", conf.global.spark("spark.executor.instances"))
+    .config("spark.executor.instances", userConfig.spark("spark.executor.instances"))
     .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     .config("spark.kryo.registrator", "org.datasyslab.geospark.serde.GeoSparkKryoRegistrator")
     .config("geospark.global.index", "true")
@@ -56,8 +62,8 @@ class GeoWeatherContext(val conf : Config){
 }
 
 object GeoWeatherContext {
-  def apply(conf : Config): GeoWeatherContext = {
-    val ctx = new GeoWeatherContext(conf)
+  def apply(appConfig : ApplicationSettings, userConfig: UserSettings): GeoWeatherContext = {
+    val ctx = new GeoWeatherContext(appConfig, userConfig)
 
     ctx.spark.sparkContext.setLogLevel("WARN")
     GeoSparkSQLRegistrator.registerAll(ctx.spark)

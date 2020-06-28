@@ -55,6 +55,12 @@ object Util {
   }
 }
 
+object String {
+  def isNullOrEmpty(str: java.lang.String) : Boolean = {
+    str == null || str.isEmpty
+  }
+}
+
 object implicits {
   type A = Any
   implicit class MapExt[K, B <: A, C <: A](val left: immutable.Map[K, B]) {
