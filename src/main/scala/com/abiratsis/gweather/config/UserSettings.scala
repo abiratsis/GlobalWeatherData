@@ -10,17 +10,23 @@ import pureconfig.error.ConfigReaderFailures
 case class WeatherTransformations(mergeWinds : Boolean, mergeTemperatures: Boolean)
 
 case class UserSettings (rootDir: String,
-                        geoSparkDistance: Int = 1,
-                        weatherTransformations : WeatherTransformations = WeatherTransformations(true, true),
-                        spark: Map[String, Int] = Map("spark.executor.instances" -> 2, "spark.executor.cores" -> 4),
-                        activeSources: List[String] = List("airTemperatureUrl", "minTemperatureUrl", "maxTemperatureUrl",
-                                "humidityUrl", "uwindUrl", "vwindUrl", "clearSkyDownwardSolarUrl", "netShortwaveRadiationUrl")
+                          geoSparkDistance: Int = 1,
+                          exportFormat: String = "parquet",
+                          weatherTransformations : WeatherTransformations = WeatherTransformations(true, true),
+                          spark: Map[String, Int] = Map("spark.executor.instances" -> 2, "spark.executor.cores" -> 4),
+                          activeSources: List[String] = List(
+                            "airTemperatureUrl", "minTemperatureUrl", "maxTemperatureUrl",
+                            "humidityUrl", "uwindUrl", "vwindUrl",
+                            "clearSkyDownwardSolarUrl", "netShortwaveRadiationUrl")
                        ) {
+
   import com.abiratsis.gweather.common.String._
+  val formats = Set("delta", "orc", "parquet", "csv")
 
   require(!isNullOrEmpty(rootDir), "rootDir should be not empty string.")
   require(new File(rootDir).isDirectory, "rootDir should be a valid directory.")
   require(geoSparkDistance >= 1, "geoSparkDistance must be >= 1.")
+  require(formats.contains(exportFormat), s"Format should be one of the:${formats.mkString(",")}")
   require(weatherTransformations != null, "weatherTransformations can't be null.")
   require(spark.nonEmpty && spark.contains("spark.executor.instances"), "spark.executor.instances can't be empty.")
   require(spark.nonEmpty && spark.contains("spark.executor.cores"), "spark.executor.cores can't be empty.")
