@@ -6,6 +6,10 @@ import scala.collection.immutable
 import scala.reflect.io.Directory
 import java.io.File
 
+import org.json4s._
+import org.json4s.jackson.Serialization._
+import org.json4s.jackson.Serialization
+
 object Util {
   /**
    * Converts case classes to map, taken from https://gist.github.com/lauris/7dc94fb29804449b1836#file-cctomap-scala
@@ -73,6 +77,11 @@ object implicits {
       (leftFiltered.toSeq ++ rightFiltered.toSeq)
         .groupBy(_._1)
         .mapValues(_.map{_._2}.toList)
+    }
+
+    def toJson : String = {
+      implicit val formats = Serialization.formats(NoTypeHints)
+      write(left)
     }
   }
 }

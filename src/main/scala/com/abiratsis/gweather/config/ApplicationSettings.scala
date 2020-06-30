@@ -65,4 +65,15 @@ object ApplicationSettings{
       case Right(c : ApplicationSettings) => c
     }
   }
+
+  def apply(resourceName : String): ApplicationSettings = {
+    val defaultUserConf = ConfigSource.resources(resourceName).load[ApplicationSettings]
+
+    defaultUserConf match {
+      case Left(f: ConfigReaderFailures) => throw new Exception(f.head.description)
+      case Right(settings: ApplicationSettings) => settings
+    }
+  }
+
+  val resourceName = "application.conf"
 }

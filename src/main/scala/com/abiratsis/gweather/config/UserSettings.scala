@@ -7,6 +7,8 @@ import pureconfig.generic.auto._
 import pureconfig._
 import pureconfig.error.ConfigReaderFailures
 
+import com.abiratsis.gweather.common.implicits._
+
 case class WeatherTransformations(mergeWinds : Boolean, mergeTemperatures: Boolean)
 
 case class UserSettings (rootDir: String,
@@ -34,19 +36,24 @@ case class UserSettings (rootDir: String,
 }
 
 object UserSettings{
-//  def apply(rootDir: String,
-//            geoSparkDistance: Int,
-//            weatherTransformations: WeatherTransformations,
-//            spark: Map[String, Int],
-//            activeSources: List[String]): UserSettings =
-//    new UserSettings(rootDir, geoSparkDistance, weatherTransformations, spark, activeSources)
-
   def apply(): UserSettings = {
-    val config = ConfigSource.resources("user.conf").load[UserSettings]
+    val defaultUserConf = ConfigSource.resources(resourceName).load[UserSettings]
 
-    config match {
-      case Left(ex : ConfigReaderFailures) => throw new Exception(ex.head.description)
-      case Right(c : UserSettings) => c
+    defaultUserConf match {
+      case Left(f : ConfigReaderFailures) => throw new Exception(f.head.description)
+      case Right(settings : UserSettings) => settings
     }
   }
+
+  def apply(inputMap: Map[String, String], resourceName: String): UserSettings = {
+    val defaultUserConf = ConfigSource.resources(resourceName)
+    val currentUserConf = ConfigSource.string(inputMap.toJson).withFallback(defaultUserConf).load[UserSettings]
+
+    currentUserConf match {
+      case Left(f : ConfigReaderFailures) => throw new Exception(f.head.description)
+      case Right(settings : UserSettings) => settings
+    }
+  }
+
+  val resourceName = "user.conf"
 }
