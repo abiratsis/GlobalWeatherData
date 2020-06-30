@@ -23,7 +23,7 @@ object HumidityDataset extends WeatherMetadata{
     case None => throw new NullContextException
   }
 
-  lazy val sourceKeys = Set("humidityUrl")
+  lazy val sourceKeys = Set("humidity")
 
   lazy val csvSources: Map[String, String] = Option(geoWeatherCtx) match {
     case Some(_) => geoWeatherCtx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
@@ -35,5 +35,5 @@ object HumidityDataset extends WeatherMetadata{
     case None => throw new NullContextException
   }
 
-  lazy val netCDFFields: Map[String, String] = Map("humidityUrl" -> "shum")
+  lazy val netCDFFields: Map[String, String] = Map("humidity" -> "shum")
 }

@@ -24,10 +24,10 @@ object TemperatureDataset extends WeatherMetadata{
   }
 
   val sourceKeys = Set(
-    "airTemperatureUrl",
-    "skinTemperatureUrl",
-    "maxTemperatureUrl",
-    "minTemperatureUrl")
+    "airTemperature",
+    "skinTemperature",
+    "maxTemperature",
+    "minTemperature")
 
   lazy val csvSources: Map[String, String] = Option(geoWeatherCtx) match {
     case Some(_) => geoWeatherCtx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
@@ -40,16 +40,16 @@ object TemperatureDataset extends WeatherMetadata{
   }
 
   lazy val netCDFFields: Map[String, String] = Map(
-    "airTemperatureUrl" -> "air",
-    "skinTemperatureUrl" -> "skt",
-    "maxTemperatureUrl" -> "tmax",
-    "minTemperatureUrl" -> "tmin"
+    "airTemperature" -> "air",
+    "skinTemperature" -> "skt",
+    "maxTemperature" -> "tmax",
+    "minTemperature" -> "tmin"
   ).filterKeys(csvSources.keySet)
 
   def mergeMaxMinTemperatures(df : DataFrame) : DataFrame = {
     val tmax_wght = 0.7
     val tmin_wght = 1.0 - tmax_wght
-    val maxMinCols = Seq("maxTemperatureUrl", "minTemperatureUrl")
+    val maxMinCols = Seq("maxTemperature", "minTemperature")
     if (maxMinCols.forall(this.geoWeatherCtx.userConfig.activeSources.contains(_))) {
       df.withColumn("temp", (df("tmin") * tmin_wght) + (df("tmax") * tmax_wght))
         .drop("tmin", "tmax")

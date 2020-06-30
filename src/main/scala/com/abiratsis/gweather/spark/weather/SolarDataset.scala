@@ -24,12 +24,12 @@ object SolarDataset extends WeatherMetadata{
   }
 
   lazy val sourceKeys = Set(
-    "clearSkyDownwardLongWaveUrl",
-    "clearSkyDownwardSolarUrl",
-    "downwardLongwaveRadiationUrl",
-    "downwardSolarRadiationUrl",
-    "netLongwaveRadiationUrl",
-    "netShortwaveRadiationUrl"
+    "clearSkyDownwardLongWave",
+    "clearSkyDownwardSolar",
+    "downwardLongwaveRadiation",
+    "downwardSolarRadiation",
+    "netLongwaveRadiation",
+    "netShortwaveRadiation"
   )
 
   lazy val csvSources: Map[String, String] = Option(geoWeatherCtx) match {
@@ -43,11 +43,11 @@ object SolarDataset extends WeatherMetadata{
   }
 
   lazy val netCDFFields: Map[String, String] = Map(
-    "clearSkyDownwardLongWaveUrl" -> "csdlf",
-    "clearSkyDownwardSolarUrl" -> "csdsf",
-    "downwardLongwaveRadiationUrl" -> "dlwrf",
-    "downwardSolarRadiationUrl" -> "dswrf",
-    "netLongwaveRadiationUrl" -> "nlwrs",
-    "netShortwaveRadiationUrl" -> "nswrs"
+    "clearSkyDownwardLongWave" -> "csdlf",
+    "clearSkyDownwardSolar" -> "csdsf",
+    "downwardLongwaveRadiation" -> "dlwrf",
+    "downwardSolarRadiation" -> "dswrf",
+    "netLongwaveRadiation" -> "nlwrs",
+    "netShortwaveRadiation" -> "nswrs"
   ).filterKeys(csvSources.keySet)
 }

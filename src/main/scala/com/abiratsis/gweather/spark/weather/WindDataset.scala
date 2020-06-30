@@ -23,7 +23,7 @@ object WindDataset extends WeatherMetadata {
     case None => throw new NullContextException
   }
 
-  lazy val sourceKeys = Set("uwindUrl", "vwindUrl")
+  lazy val sourceKeys = Set("uwind", "vwind")
 
   lazy val csvSources: Map[String, String] = Option(geoWeatherCtx) match {
     case Some(_) => geoWeatherCtx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
@@ -36,8 +36,8 @@ object WindDataset extends WeatherMetadata {
   }
 
   lazy val netCDFFields: Map[String, String] = Map(
-    "uwindUrl" -> "uwnd",
-    "vwindUrl" -> "vwnd"
+    "uwind" -> "uwnd",
+    "vwind" -> "vwnd"
   ).filterKeys(netCDFSources.keySet)
 
   /**
@@ -52,7 +52,7 @@ object WindDataset extends WeatherMetadata {
     val spark = this.geoWeatherCtx.spark
     import spark.implicits._
 
-    val windCols = Seq("vwindUrl", "uwindUrl")
+    val windCols = Seq("vwind", "uwind")
     if (windCols.forall(this.geoWeatherCtx.userConfig.activeSources.contains(_)))
       df.withColumn("wind_speed", sqrt(pow($"vwnd", 2.0) + pow($"uwnd", 2.0)))
         .drop("vwnd", "uwnd")

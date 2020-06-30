@@ -18,7 +18,7 @@ object Main extends App {
     implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
 
     val pipeline = new Pipeline()
-    pipeline.execute(ExecStep.instPre, "parquet")
+    pipeline.execute(ExecStep.expData, "parquet")
     ctx.head.spark.read.parquet(userConfig.rootDir + "/geo_weather")
       .where("country == 'Greece'")
       .show()

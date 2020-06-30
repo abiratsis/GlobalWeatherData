@@ -47,6 +47,6 @@ object WorldDataset extends GeoMetadata {
   }
 
   lazy val downloadDir = ctx.downloadDirs("worldDir")
-  lazy val sourceKeys: Set[String] = Set("worldCountriesUrl")
+  lazy val sourceKeys: Set[String] = Set("worldCountries")
   lazy val csvSources: Map[String, String] = ctx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
 }
