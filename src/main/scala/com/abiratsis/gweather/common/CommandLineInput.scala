@@ -1,5 +1,7 @@
 package com.abiratsis.gweather.common
 import org.rogach.scallop._
+import com.abiratsis.gweather.common.implicits._
+
 class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   version("gweather 0.0.1 (c) 2020 abiratsis")
   banner("""Usage: gweather [OPTION]...
@@ -15,4 +17,15 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
     "maxTemperature", "humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation")))
 
   verify()
+
+  def getInputToMap() : Map[String, String] = {
+    val userInputMap = args.sliding(2, 2).map(a => (a.head.last, a.last)).toMap
+    val optionsMap = builder.opts.filter{
+      p => userInputMap.contains(p.shortNames(0))
+    }.map{
+      o => (o.shortNames(0), o.name)
+    }.toMap
+
+    optionsMap.join(userInputMap).map{case (_,v : Seq[String]) => (v.head, v.last)}
+  }
 }
