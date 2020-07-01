@@ -58,7 +58,7 @@ object TemperatureDataset extends WeatherMetadata{
   }
 
   def convertToCelcious(df : DataFrame) : DataFrame = {
-    netCDFFields.keys.foldLeft(df){
+    netCDFFields.values.foldLeft(df){
       case (df, c) => df.withColumn(c, df(c) - 273.15)
     }
   }

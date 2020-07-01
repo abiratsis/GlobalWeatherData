@@ -52,9 +52,11 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
         HumidityDataset.netCDFFields.values ++
         SolarDataset.netCDFFields.values
 
-    Util.deleteDir(destination + "/geo_weather")
+    Util.deleteDir(destination + "geo_weather")
 
     var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.userConfig.geoSparkDistance)
+      .transform(TemperatureDataset.convertToCelcious)
+
     if (ctx.userConfig.weatherTransformations.mergeWinds)
       weatherDf = weatherDf.transform(WindDataset.mergeWindSpeed)
 
@@ -65,6 +67,6 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
       .format(format)
       .option("header", "true")
       .mode("overwrite")
-      .save(destination + "/geo_weather")
+      .save(destination + "geo_weather")
   }
 }
