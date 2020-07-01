@@ -35,34 +35,37 @@ class Pipeline(implicit context: Option[GeoWeatherContext]) {
     case None => throw new NullContextException
   }
 
-  private def exportGeoWeatherData(format: String) : Unit = context match {
+  private def exportGeoWeatherData() : Unit = context match {
     case Some(ctx) => {
       WeatherDataset.mergeAndCreateWeatherTable()
       WorldDataset()(ctx).createWorldTable()
 
-      val finalDf = new WeatherAtLocationHandler()(ctx)
-      finalDf.save(ctx.userConfig.rootDir, format)
+      val weatherAtLocationHandler = new WeatherAtLocationHandler()(ctx)
+      weatherAtLocationHandler.save(ctx.userConfig.rootDir, ctx.userConfig.exportFormat)
     }
     case None => throw new NullContextException
   }
 
-  import ExecStep._
-  def execute(startAt: ExecutionStep = instPre, format: String) = {
+  def execute = context match {
+    case Some(ctx) => {
+      val startAt = ExecutionStep(ctx.userConfig.startAt.toInt)
 
-    if(startAt.id == 1)
-      this.installPrerequisites
+      if (startAt.id == 1)
+        this.installPrerequisites
 
-    if (startAt.id <= 2)
-      this.downloadData
+      if (startAt.id <= 2)
+        this.downloadData
 
-    if(startAt.id <= 3)
-      this.convertToCsv
+      if (startAt.id <= 3)
+        this.convertToCsv
 
-    this.exportGeoWeatherData(format)
+      this.exportGeoWeatherData
+    }
+    case None => throw new NullContextException
   }
 }
 
-object ExecStep extends Enumeration {
+object ExecutionStep extends Enumeration {
   type ExecutionStep = Value
   val instPre = Value(1)
   val downData = Value(2)

@@ -52,7 +52,7 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
         HumidityDataset.netCDFFields.values ++
         SolarDataset.netCDFFields.values
 
-    Util.deleteDir(destination + "geo_weather")
+    Util.deleteDir(destination + "/geo_weather")
 
     var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.userConfig.geoSparkDistance)
     if (ctx.userConfig.weatherTransformations.mergeWinds)

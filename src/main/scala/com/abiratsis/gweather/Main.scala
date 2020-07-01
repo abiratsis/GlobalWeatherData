@@ -9,17 +9,19 @@ object Main extends App {
   //    Logger.getLogger("org")
   val userInput = new CommandLineInput(args)
 
+  //  println( userInput.summary)
+
   val inputMap = userInput.getInputToMap
 
   val appConfig = ApplicationSettings()
   val userConfig = UserSettings(inputMap, UserSettings.resourceName)
 
 //  println(userConfig)
-    implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
+  implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
 
-    val pipeline = new Pipeline()
-    pipeline.execute(ExecStep.expData, "parquet")
-    ctx.head.spark.read.parquet(userConfig.rootDir + "/geo_weather")
-      .where("country == 'Greece'")
-      .show()
+  val pipeline = new Pipeline()
+  pipeline.execute
+  ctx.head.spark.read.parquet(userConfig.rootDir + "/geo_weather")
+    .where("country == 'Greece'")
+    .show()
 }
