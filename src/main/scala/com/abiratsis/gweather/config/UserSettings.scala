@@ -3,6 +3,7 @@ package com.abiratsis.gweather.config
 import java.io.File
 
 import com.abiratsis.gweather.common.implicits._
+import com.abiratsis.gweather.spark.weather.{CDFNumericType, TemperatureScaleType}
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.generic.auto._
@@ -18,24 +19,28 @@ case class UserSettings (rootDir: String,
                             "airTemperatureUrl", "minTemperatureUrl", "maxTemperatureUrl",
                             "humidityUrl", "uwindUrl", "vwindUrl",
                             "clearSkyDownwardSolarUrl", "netShortwaveRadiationUrl"),
-                          startAt: String = "1"
+                          startAt: Int = 1,
+                          temperatureScale: String = "C",
+                          numericType: String = "double"
                        ) {
 
   import com.abiratsis.gweather.common.String._
   val formats = Set("delta", "orc", "parquet", "csv")
-  val steps = List("1", "2", "3", "4")
+  val tscales: Set[String] = TemperatureScaleType.values.map{_.toString}
+  val ntypes: Set[String] = CDFNumericType.values.map{_.toString}
 
   require(!isNullOrEmpty(rootDir), "rootDir should be non empty string.")
   require(new File(rootDir).isDirectory, "rootDir should be a valid directory.")
   require(geoSparkDistance >= 1, "geoSparkDistance must be >= 1.")
-  require(formats.contains(exportFormat), s"Format should be one of the:${formats.mkString(",")}")
+  require(formats.contains(exportFormat), s"Format should be one of the [${formats.mkString(",")}]")
   require(weatherTransformations != null, "weatherTransformations can't be null.")
   require(spark.nonEmpty && spark.contains("spark.executor.instances"), "spark.executor.instances can't be empty.")
   require(spark.nonEmpty && spark.contains("spark.executor.cores"), "spark.executor.cores can't be empty.")
   require(activeSources.nonEmpty, "activeSources can't be empty.")
-  require(!isNullOrEmpty(startAt), "startAt should be non empty string.")
-  require(steps.contains(startAt), s"startAt should be one of the:${steps.mkString(",")}")
-
+  require(startAt >= 1 && startAt <= 4, "startAt should be integer in the range 1-4.")
+  require(tscales.contains(temperatureScale),
+    s"temperatureScale should be one of the [${tscales.mkString(",")}]")
+  require(ntypes.contains(numericType), s"numericType should be one of the [${ntypes.mkString(",")}]")
 }
 
 object UserSettings{

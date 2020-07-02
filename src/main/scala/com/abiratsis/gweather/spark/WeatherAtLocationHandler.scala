@@ -1,7 +1,7 @@
 package com.abiratsis.gweather.spark
 
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
-import com.abiratsis.gweather.spark.weather.{HumidityDataset, SolarDataset, TemperatureDataset, WindDataset}
+import com.abiratsis.gweather.spark.weather.{CDFNumericType, HumidityDataset, SolarDataset, TemperatureDataset, TemperatureScaleType, WeatherDataset, WindDataset}
 
 class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
   private def getWeatherByLocation(cols: Seq[String], cmonth :Int, dist: Int) = {
@@ -55,13 +55,18 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
     Util.deleteDir(destination + "geo_weather")
 
     var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.userConfig.geoSparkDistance)
-      .transform(TemperatureDataset.convertToCelcious)
+
+    if (ctx.userConfig.temperatureScale == TemperatureScaleType.celsius.toString)
+      weatherDf = weatherDf.transform(TemperatureDataset.convertToCelcious)
 
     if (ctx.userConfig.weatherTransformations.mergeWinds)
       weatherDf = weatherDf.transform(WindDataset.mergeWindSpeed)
 
     if (ctx.userConfig.weatherTransformations.mergeTemperatures)
       weatherDf = weatherDf.transform(TemperatureDataset.mergeMaxMinTemperatures)
+
+    if (ctx.userConfig.numericType == CDFNumericType.float.toString)
+      weatherDf = weatherDf.transform(WeatherDataset.toFloat)
 
     weatherDf.write
       .format(format)

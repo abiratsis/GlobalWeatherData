@@ -15,12 +15,9 @@ private[spark] class SolarDataset(val spark : SparkSession)
 object SolarDataset extends WeatherMetadata{
   var geoWeatherCtx: GeoWeatherContext = _
 
-  def apply()(implicit context: Option[GeoWeatherContext]): SolarDataset = context match {
-    case Some(ctx) => {
-      this.geoWeatherCtx = ctx
-      new SolarDataset(ctx.spark)
-    }
-    case None => throw new NullContextException
+  def apply()(implicit context: GeoWeatherContext): SolarDataset = {
+      this.geoWeatherCtx = context
+      new SolarDataset(context.spark)
   }
 
   lazy val sourceKeys = Set(

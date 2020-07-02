@@ -16,12 +16,12 @@ object Main extends App {
   val appConfig = ApplicationSettings()
   val userConfig = UserSettings(inputMap, UserSettings.resourceName)
 
-//  println(userConfig)
   implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
 
   val pipeline = new Pipeline()
   pipeline.execute
+
   ctx.head.spark.read.parquet(userConfig.rootDir + "/geo_weather")
     .where("country == 'Greece'")
-    .show()
+    .show(1000)
 }

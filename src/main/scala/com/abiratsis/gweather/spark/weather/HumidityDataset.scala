@@ -15,12 +15,9 @@ private[spark] class HumidityDataset(val spark : SparkSession)
 object HumidityDataset extends WeatherMetadata{
   var geoWeatherCtx: GeoWeatherContext = _
 
-  def apply()(implicit context: Option[GeoWeatherContext]): HumidityDataset = context match {
-    case Some(ctx) => {
-      this.geoWeatherCtx = ctx
-      new HumidityDataset(ctx.spark)
-    }
-    case None => throw new NullContextException
+  def apply()(implicit context: GeoWeatherContext): HumidityDataset = {
+      this.geoWeatherCtx = context
+      new HumidityDataset(context.spark)
   }
 
   lazy val sourceKeys = Set("humidity")

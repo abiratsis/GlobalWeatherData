@@ -1,9 +1,11 @@
 package com.abiratsis.gweather.spark.weather
 
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
+import com.abiratsis.gweather.exceptions.NullContextException
 import com.abiratsis.gweather.spark.{GeoDataset, implicits}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, month}
+import org.apache.spark.sql.types.DoubleType
 
 private[spark] trait WeatherDataset extends GeoDataset {
   val netCDFSources : Map[String, String]
@@ -60,30 +62,44 @@ private[spark] trait WeatherDataset extends GeoDataset {
 }
 
 object WeatherDataset {
-  def mergeAndCreateWeatherTable()(implicit context: Option[GeoWeatherContext]): DataFrame = {
-    val tempDf = TemperatureDataset().load()
-    val humDf = HumidityDataset().load()
-    val windDf = WindDataset().load()
-    val solarDf = SolarDataset().load()
+  def mergeAndCreateWeatherTable()(implicit context: Option[GeoWeatherContext]): DataFrame = context match {
+    case Some(ctx) => {
+      val tempDf = TemperatureDataset()(ctx).load()
+      val humDf = HumidityDataset()(ctx).load()
+      val windDf = WindDataset()(ctx).load()
+      val solarDf = SolarDataset()(ctx).load()
 
-    val tempCount = tempDf.count()
-    assert(tempCount == windDf.count())
-    assert(tempCount == humDf.count())
-    //assert(tempCount == solarDf.count())
+      val tempCount = tempDf.count()
+      assert(tempCount == windDf.count())
+      assert(tempCount == humDf.count())
+      //assert(tempCount == solarDf.count())
 
-    import com.abiratsis.gweather.spark.implicits._
+      import com.abiratsis.gweather.spark.implicits._
 
-    val dropCols = Seq("geom", "month")
-    val joinCols = Seq("date", "lon", "lat")
+      val dropCols = Seq("geom", "month")
+      val joinCols = Seq("date", "lon", "lat")
 
-    val weatherDf = tempDf.join(windDf, joinCols, "inner")
-      .join(solarDf, joinCols, "inner")
-      .join(humDf, joinCols, "inner")
-      .drop(dropCols.toCol(windDf, solarDf, humDf))
-      .cache()
+      val weatherDf = tempDf.join(windDf, joinCols, "inner")
+        .join(solarDf, joinCols, "inner")
+        .join(humDf, joinCols, "inner")
+        .drop(dropCols.toCol(windDf, solarDf, humDf))
+        .cache()
 
-    weatherDf.createOrReplaceTempView("weather_tbl")
-    weatherDf
+      weatherDf.createOrReplaceTempView("weather_tbl")
+      weatherDf
+    }
+    case None => throw new NullContextException
   }
 
+  def toFloat(df: DataFrame): DataFrame = {
+    df.schema.fields.filter(_.dataType == DoubleType).foldLeft(df) {
+      case (df, c) => df.withColumn(c.name, df(c.name).cast("float"))
+    }
+  }
+}
+
+object CDFNumericType extends Enumeration {
+  type CDFNumericType = Value
+  val double = Value("double")
+  val float = Value("float")
 }

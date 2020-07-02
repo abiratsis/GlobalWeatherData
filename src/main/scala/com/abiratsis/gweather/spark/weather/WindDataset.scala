@@ -15,12 +15,9 @@ private[spark] class WindDataset(protected val spark : SparkSession)
 object WindDataset extends WeatherMetadata {
   var geoWeatherCtx: GeoWeatherContext = _
 
-  def apply()(implicit context: Option[GeoWeatherContext]): WindDataset = context match {
-    case Some(ctx) => {
-      this.geoWeatherCtx = ctx
-      new WindDataset(ctx.spark)
-    }
-    case None => throw new NullContextException
+  def apply()(implicit context: GeoWeatherContext): WindDataset = {
+      this.geoWeatherCtx = context
+      new WindDataset(context.spark)
   }
 
   lazy val sourceKeys = Set("uwind", "vwind")

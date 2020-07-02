@@ -15,12 +15,9 @@ private[spark] class TemperatureDataset(val spark: SparkSession)
 object TemperatureDataset extends WeatherMetadata{
   var geoWeatherCtx: GeoWeatherContext = _
 
-  def apply()(implicit context: Option[GeoWeatherContext]): TemperatureDataset = context match {
-    case Some(ctx) => {
-      this.geoWeatherCtx = ctx
-      new TemperatureDataset(ctx.spark)
-    }
-    case None => throw new NullContextException
+  def apply()(implicit context: GeoWeatherContext): TemperatureDataset = {
+      this.geoWeatherCtx = context
+      new TemperatureDataset(context.spark)
   }
 
   val sourceKeys = Set(
@@ -62,5 +59,10 @@ object TemperatureDataset extends WeatherMetadata{
       case (df, c) => df.withColumn(c, df(c) - 273.15)
     }
   }
+}
 
+object TemperatureScaleType extends Enumeration {
+  type TemperatureScaleType = Value
+  val celsius = Value("C")
+  val fahrenheit = Value("F")
 }
