@@ -53,9 +53,18 @@ object UserSettings{
     }
   }
 
-  def apply(inputMap: Map[String, String], resourceName: String): UserSettings = {
+  def apply(inputMap: Map[String, String]): UserSettings = {
     val defaultUserConf = ConfigSource.resources(resourceName)
     val currentUserConf = ConfigSource.string(inputMap.toJson).withFallback(defaultUserConf).load[UserSettings]
+
+    currentUserConf match {
+      case Left(f : ConfigReaderFailures) => throw new Exception(f.head.description)
+      case Right(settings : UserSettings) => settings
+    }
+  }
+
+  def apply(file: File): UserSettings = {
+    val currentUserConf = ConfigSource.file(file).load[UserSettings]
 
     currentUserConf match {
       case Left(f : ConfigReaderFailures) => throw new Exception(f.head.description)

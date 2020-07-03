@@ -1,14 +1,22 @@
 package com.abiratsis.gweather.common
+import java.io.File
+
 import org.rogach.scallop._
 import com.abiratsis.gweather.common.implicits._
 
+
+// https://stackoverflow.com/questions/21503865/how-to-denote-that-a-command-line-argument-is-optional-when-printing-usage
 class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   version("gweather 0.0.1 (c) 2020 abiratsis")
-  banner("""Usage: gweather [OPTION]...
-           |gweather is a program that allows user to download weather data.
+  banner("""Usage: gweather {-r <root directory> [processing options, export options], --user-conf <user configuration path>}
+           |Processing options: -s [start-at],-a [active-sources], -d [geo-distance], -w [merge-winds], -t [merge-temp]
+           |Export options: -f [export-format], -l [temperature-scale], -n [numeric-type]
+           |
+           |gweather is a program that allows user to download and process weather data.
            |Options:
            |""".stripMargin)
-  val rootDir = opt[String](required = true, short = 'r', descr = "The root directory where the weather datasources will be exported.")
+  //todo: rename this to output dir
+  val rootDir = opt[String](short = 'r', descr = "The root directory where the weather datasources will be exported.")
   val geoSparkDistance = opt[Int](default = Some(1), short = 'd', descr = "The distance between 2 GeoSpark points.")
   val mergeWinds = opt[Boolean](default = Some(true), short = 'w', descr = "A flag specifying whether winds speeds should be merged into one.")
   val mergeTemp = opt[Boolean](default = Some(true), short = 't', descr = "A flag specifying whether min/max temperatures should be merged into one.")
@@ -22,13 +30,16 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   val startAt = choice(choices = List("1", "2", "3", "4"), short = 's', default = Some("1"), descr =
     "The step the process should start from. The available steps are: install prerequisites(1), download data(2), convert to CSV(3), export(4).")
 
+  val userConf = opt[File](noshort = true, descr = "The path of the user configuration file.")
 
+  conflicts(userConf, List(rootDir, geoSparkDistance, mergeWinds, mergeTemp, exportFormat, temperatureScale, numericType, activeSources, startAt))
+  validateFileExists(userConf)
   verify()
 
   def getInputToMap() : Map[String, String] = {
     val userInputMap = args.sliding(2, 2).map(a => (a.head.last, a.last)).toMap
     val optionsMap = builder.opts.filter{
-      p => userInputMap.contains(p.shortNames(0))
+      p => p.shortNames.nonEmpty && userInputMap.contains(p.shortNames(0))
     }.map{
       o => (o.shortNames(0), o.name)
     }.toMap

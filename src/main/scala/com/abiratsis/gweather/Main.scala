@@ -9,12 +9,23 @@ object Main extends App {
   //    Logger.getLogger("org")
   val userInput = new CommandLineInput(args)
 
-  //  println( userInput.summary)
+  //    println( userInput.summary)
 
-  val inputMap = userInput.getInputToMap
+  var userConfig: UserSettings = _
 
+  userInput.userConf.toOption match {
+    case Some(f) => {
+      userConfig = UserSettings(f)
+    }
+    case None => {
+      val inputMap = userInput.getInputToMap
+      userConfig = UserSettings(inputMap)
+    }
+  }
+
+//  println(userConfig)
+//  System.exit(1)
   val appConfig = ApplicationSettings()
-  val userConfig = UserSettings(inputMap, UserSettings.resourceName)
 
   implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
 
