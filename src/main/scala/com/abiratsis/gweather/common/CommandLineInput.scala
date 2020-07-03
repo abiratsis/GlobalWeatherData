@@ -4,15 +4,17 @@ import java.io.File
 import org.rogach.scallop._
 import com.abiratsis.gweather.common.implicits._
 
-
+// Resources:
+// https://stackoverflow.com/questions/23242493/linux-unix-man-page-syntax-conventions
 // https://stackoverflow.com/questions/21503865/how-to-denote-that-a-command-line-argument-is-optional-when-printing-usage
 class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   version("gweather 0.0.1 (c) 2020 abiratsis")
   banner("""Usage: gweather {-r <root directory> [processing options, export options], --user-conf <user configuration path>}
-           |Processing options: -s [start-at],-a [active-sources], -d [geo-distance], -w [merge-winds], -t [merge-temp]
-           |Export options: -f [export-format], -l [temperature-scale], -n [numeric-type]
+           |Processing options: [-s start_at], [-a active_sources], [-d geo_distance], [-w merge_winds], [-t merge_temp]
+           |Export options: [-f export_format], [-l temperature_scale], [-n numeric_type]
            |
            |gweather is a program that allows user to download and process weather data.
+           |
            |Options:
            |""".stripMargin)
   //todo: rename this to output dir
