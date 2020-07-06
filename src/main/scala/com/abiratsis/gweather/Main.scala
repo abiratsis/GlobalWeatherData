@@ -4,7 +4,8 @@ import com.abiratsis.gweather.common.{CommandLineInput, GeoWeatherContext}
 import com.abiratsis.gweather.config.{ApplicationSettings, UserSettings}
 
 //import org.apache.log4j.{Level, Logger}
-
+//todo: fix missing data (Missing data is flagged with a value of -9.96921e+36f.
+// link: https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html
 object Main extends App {
   //    Logger.getLogger("org")
   val userInput = new CommandLineInput(args)
