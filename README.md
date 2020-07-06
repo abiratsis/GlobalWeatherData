@@ -65,3 +65,11 @@ Make sure you have the next packages installed on your machine:
 - Java JRE 8 or later
 - Python3 
 - pip3 
+
+### References
+
+- https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.surfaceflux.html
+- https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html
+- https://psl.noaa.gov/data/gridded/whatsnetCDF.html
+- https://www.psl.noaa.gov/about/
+- https://simplemaps.com/data/world-cities
