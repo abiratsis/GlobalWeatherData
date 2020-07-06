@@ -7,7 +7,7 @@ for wind, temperature, humidity and solar radiation.
 
 ### Purpose
 
-Recently I worked on a project for analyzing geo-spacial data, quickly I realized that I was not able
+Recently I worked on a project for analyzing climate geo-spacial data. Quickly I realized that I was not able
 to find an open-source tool which combines reliable weather data with accurate geographical locations. 
 Most of the existing datasets provide the weather data using geographical coordinates and not the actual
 text representation of the location e.g `city/country`.  
@@ -48,9 +48,20 @@ Weather components used by GWeather:
    - Downward solar radiation flux ([source](https://psl.noaa.gov/cgi-bin/db_search/DBSearch.pl?Dataset=NCEP+Reanalysis+Daily+Averages&Variable=Downward+solar+radiation+flux))
    - Net longwave radiation ([source](https://psl.noaa.gov/cgi-bin/db_search/DBSearch.pl?Dataset=NCEP+Reanalysis+Daily+Averages&Variable=Net+longwave+radiation+flux))
    - Net shortwave radiation ([source](https://psl.noaa.gov/cgi-bin/db_search/DBSearch.pl?Dataset=NCEP+Reanalysis+Daily+Averages&Variable=Net+shortwave+radiation+flux))
-   
+
+PSL uses [netCDF](https://psl.noaa.gov/data/gridded/whatsnetCDF.html) for storing the data. GWeather
+can convert the netCDF data into different formats. Currently, we support CSV, Apache Parquet, 
+Apache ORC and Apache delta-lake.
+
+#### World data
+
+GWeather combines weather data together the world cities/towns database offered from 
+[simplemaps](https://simplemaps.com/data/world-cities). The dataset is accurate and up-to-date since the data 
+has been imported from authoritative sources such as the NGIA, US Geological Survey, US Census Bureau, and NASA.
+ 
 ### Prerequisites
 
 Make sure you have the next packages installed on your machine:
+- Java JRE 8 or later
 - Python3 
 - pip3 
