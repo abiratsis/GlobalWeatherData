@@ -1,6 +1,6 @@
 name := "GlobalWeatherData"
 
-version := "0.1"
+version := "0.1.0"
 
 scalaVersion := "2.11.11"
 val sparkVersion = "2.4.4"
@@ -13,9 +13,9 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   //Spark
-  "org.apache.spark"     %% "spark-core" % sparkVersion,
-  "org.apache.spark"     %% "spark-sql"  % sparkVersion,
-  "org.apache.spark"     %% "spark-hive" % sparkVersion,
+  "org.apache.spark"     %% "spark-core" % sparkVersion % "provided",
+  "org.apache.spark"     %% "spark-sql"  % sparkVersion % "provided",
+  "org.apache.spark"     %% "spark-hive" % sparkVersion % "provided",
 
   //Testing
   "org.scalatest" %% "scalatest" % "3.1.1" % "test",
@@ -35,6 +35,18 @@ libraryDependencies ++= Seq(
   //Command-line
   "org.rogach" %% "scallop" % "3.4.0"
 )
+
+assemblyJarName in assembly:= "gweather.jar"
+
+// if deduplication error occurs check the link below
+// https://stackoverflow.com/questions/25144484/sbt-assembly-deduplication-found-error
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", _*) => MergeStrategy.discard
+  case x => {
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+  }
+}
 
 //Compile / packageBin / mappings += {
 //  (baseDirectory.value / "scripts" / "download_weather.sh") -> "scripts/download_weather.sh"
