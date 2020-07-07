@@ -26,8 +26,10 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   val temperatureScale = opt[String](default = Some("C"), short = 'l', descr = "Temperature scale, it should be one of [C, F].")
   val numericType = opt[String](default = Some("double"), short = 'n', descr = "The numeric type for CDF columns, it should be one of [double, float].")
 
-  val activeSources = opt[List[String]](short = 'a',default = Some(List("airTemperature", "skinTemperature", "minTemperature",
-    "maxTemperature", "humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation")))
+  val activeSources = opt[List[String]](short = 'a',
+    default = Some(List("airTemperature", "skinTemperature", "minTemperature", "maxTemperature", "humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation")),
+    descr = "The list of netCDF data-sources to download."
+  )
 
   val startAt = choice(choices = List("1", "2", "3", "4"), short = 's', default = Some("1"), descr =
     "The step the process should start from. The available steps are: install prerequisites(1), download data(2), convert to CSV(3), export(4).")

@@ -68,10 +68,17 @@ Before using GWeather please make sure you have the next packages installed on y
 - Python3 
 - pip3 
 
-#### Command line
+#### Installation
 
-In order to run the gweather from command line users must provide the next arguments through a 
-config file or as command line arguments:
+1. Download [gweather_v0.1.0-alpha.zip](https://github.com/abiratsis/GlobalWeatherData/releases/download/v0.1.0-alpha/gweather_v0.1.0-alpha.zip)
+2. Unzip the gweather_v0.1.0-alpha.zip.
+3. Grant execute permission to `gweather.sh` with `chmod +x gweather.sh`
+4. Execute the program `./gweather [options]`
+
+#### Configuration
+
+Users can determine the program settings via the command line (`--input-mode c`) or via a config file (`--input-mode f`).
+In both cases users should provide the following settings:
 
 ```commandline
 rootDir (-r): The root directory where the weather datasources will be exported
@@ -85,22 +92,19 @@ activeSources (-a): The sources that should be exported by the program
 startAt (-s): The step the process should start from. The available steps are: install prerequisites(1), download data(2), convert to CSV(3), export(4)
 ```
 
-Use gweather with configuration file as next:
+Use gweather with a configuration file as next:
 ```commandline
-gweather --user-conf <conf_file>
+gweather -m f --user-conf <conf_file>
 ```
 
-Or specifying arguments values from command line (`--user-conf` argument blank):
-
+Or via the command line:
 ```commandline
-gweather -r /tmp/data/ -d 1 -f "csv"
+gweather -m f -r /tmp/data/ -d 1 -f "csv" ...
 ```
-**Attention:** be aware that once you specify `--user-conf` argument you should not specify 
-the rest of them since they are mutually exclusive.
+**Attention:** be aware that once you specify `--user-conf` (running with config mode) argument you should not add more arguments
+since they are mutually exclusive. 
 
-While using command line mode, if one of the previous arguments is not specified gweather will use the following default 
-values:
-
+When using command line mode, if some of the arguments are not specified gweather will use the following default values:
 ```commandline
 rootDir: none
 geoSparkDistance: 1
@@ -109,8 +113,7 @@ mergeTemp: true
 exportFormat: parquet
 temperatureScale: "C"
 numericType: "double"
-activeSources: ["airTemperature", "skinTemperature", "minTemperature", "maxTemperature", 
-"humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation"]
+activeSources: ["airTemperature", "skinTemperature", "minTemperature", "maxTemperature", "humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation"]
 startAt: "1"
 ```
 
