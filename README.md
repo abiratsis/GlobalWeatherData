@@ -1,5 +1,6 @@
 # GWeather
 A command line tool/library that helps users to work with climate data from all over the world.
+
 ### Description
 
 GWeather it is a tool for retrieving, exporting and viewing world weather data. The application provides world climate data
@@ -10,14 +11,20 @@ for wind, temperature, humidity and solar radiation.
 Recently I worked on a project for analyzing climate geo-spacial data. Quickly I realized that I was not able
 to find an open-source tool which combines reliable weather data with accurate geographical locations. 
 Most of the existing datasets provide the weather data using geographical coordinates and not the actual
-text representation of the location e.g `city/country`.  
+text representation of the location e.g `city/country`. The main purpose is to join the weather dataset together 
+with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process.
 
 I came up with GWeather having in mind the next goals:
  - Find a source which provides reliable, frequent and recent climate data 
  - Try to cover as many locations as possible all over the planet
+ - Find proper tools/libraries that support joining geo-spacial data
  - Calculate efficiently geo-spacial operations
  - Provide a friendly Scala based API
  - Provide a friendly command line interface
+
+TODO: add input dataset
+
+TODO: add final dataset
 
 ### Usage
  
