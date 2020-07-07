@@ -12,7 +12,8 @@ Recently I worked on a project for analyzing climate geo-spacial data. Quickly I
 to find an open-source tool which combines reliable weather data with accurate geographical locations. 
 Most of the existing datasets provide the weather data using geographical coordinates and not the actual
 text representation of the location e.g `city/country`. The main purpose is to join the weather dataset together 
-with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process.
+with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process. Also,
+the application should support exporting data in different popular formats e.g CSV, parquet, delta-lake, etc.
 
 I came up with GWeather having in mind the next goals:
  - Find a source which provides reliable, frequent and recent climate data 
