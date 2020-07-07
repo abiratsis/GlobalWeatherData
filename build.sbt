@@ -13,9 +13,9 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   //Spark
-  "org.apache.spark"     %% "spark-core" % sparkVersion % "provided",
-  "org.apache.spark"     %% "spark-sql"  % sparkVersion % "provided",
-  "org.apache.spark"     %% "spark-hive" % sparkVersion % "provided",
+  "org.apache.spark"     %% "spark-core" % sparkVersion,
+  "org.apache.spark"     %% "spark-sql"  % sparkVersion,
+  "org.apache.spark"     %% "spark-hive" % sparkVersion,
 
   //Testing
   "org.scalatest" %% "scalatest" % "3.1.1" % "test",
@@ -38,19 +38,12 @@ libraryDependencies ++= Seq(
 
 assemblyJarName in assembly:= "gweather.jar"
 
-// if deduplication error occurs check the link below
+// Deduplication error, check the link below for more information
 // https://stackoverflow.com/questions/25144484/sbt-assembly-deduplication-found-error
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", _*) => MergeStrategy.discard
-  case x => {
-    val oldStrategy = (assemblyMergeStrategy in assembly).value
-    oldStrategy(x)
-  }
+  case _ => MergeStrategy.first
 }
-
-//Compile / packageBin / mappings += {
-//  (baseDirectory.value / "scripts" / "download_weather.sh") -> "scripts/download_weather.sh"
-//}
 
 lazy val postBuild  = taskKey[Unit]("post build")
 postBuild := {
@@ -59,6 +52,8 @@ postBuild := {
   val shellTarget = crossTarget.value / "scripts/download_weather.sh"
   val pySource = (baseDirectory.value / "scripts/nc_to_csv.py")
   val pyTarget = crossTarget.value / "scripts/nc_to_csv.py"
+  val execScriptSource = (baseDirectory.value / "scripts/gweather.sh")
+  val execScriptTarget = crossTarget.value / "gweather.sh"
 
   log.info(s"Copying ${shellSource.getPath} to ${shellTarget.getPath}")
   IO.copyFile(shellSource, shellTarget)
@@ -66,6 +61,8 @@ postBuild := {
   log.info(s"Copying ${pySource.getPath} to ${pyTarget.getPath}")
   IO.copyFile(pySource, pyTarget)
 
+  log.info(s"Copying ${execScriptSource.getPath} to ${execScriptTarget.getPath}")
+  IO.copyFile(execScriptSource, execScriptTarget)
   None
 }
 

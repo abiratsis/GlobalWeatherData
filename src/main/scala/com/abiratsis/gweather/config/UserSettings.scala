@@ -2,6 +2,7 @@ package com.abiratsis.gweather.config
 
 import java.io.File
 
+import com.abiratsis.gweather.ExecutionStep
 import com.abiratsis.gweather.common.implicits._
 import com.abiratsis.gweather.spark.weather.{CDFNumericType, TemperatureScaleType}
 import pureconfig.ConfigSource
@@ -41,6 +42,22 @@ case class UserSettings (rootDir: String,
   require(tscales.contains(temperatureScale),
     s"temperatureScale should be one of the [${tscales.mkString(",")}]")
   require(ntypes.contains(numericType), s"numericType should be one of the [${ntypes.mkString(",")}]")
+
+  override def toString: String = {
+    s"""
+       |User configuration
+       |====================
+       |rootDir:$rootDir
+       |geoSparkDistance: $geoSparkDistance
+       |exportFormat: $exportFormat
+       |weatherTransformations: $weatherTransformations
+       |spark: $spark
+       |activeSources: $activeSources
+       |startAt: ${ExecutionStep(startAt).toString}
+       |temperatureScale: $temperatureScale
+       |numericType: $numericType
+       |""".stripMargin
+  }
 }
 
 object UserSettings{

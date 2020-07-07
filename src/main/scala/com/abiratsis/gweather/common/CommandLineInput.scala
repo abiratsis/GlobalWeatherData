@@ -9,7 +9,7 @@ import com.abiratsis.gweather.common.implicits._
 // https://stackoverflow.com/questions/21503865/how-to-denote-that-a-command-line-argument-is-optional-when-printing-usage
 class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   version("gweather 0.1.0 (c) 2020 abiratsis")
-  banner("""Usage: gweather {-r <root_directory> [processing options, export options], --user-conf <user_conf_file>}
+  banner("""Usage: gweather -m <input_mode> [-r <root_directory> [processing options, export options] | --user-conf <user_conf_file>]
            |Processing options: [-s start_at], [-a active_sources], [-d geo_distance], [-w merge_winds], [-t merge_temp]
            |Export options: [-f export_format], [-l temperature_scale], [-n numeric_type]
            |
@@ -34,6 +34,10 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
 
   val userConf = opt[File](noshort = true, descr = "The path of the user configuration file.")
 
+  val inputMode = choice(choices= List("f", "c"), required = true, short = 'm', descr = "The input mode, config file or command line")
+
+  addValidation(validateFileInputMode)
+  addValidation(validateCmdInputMode)
   conflicts(userConf, List(rootDir, geoSparkDistance, mergeWinds, mergeTemp, exportFormat, temperatureScale, numericType, activeSources, startAt))
   validateFileExists(userConf)
   verify()
@@ -47,5 +51,19 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
     }.toMap
 
     optionsMap.join(userInputMap).map{case (_,v : Seq[String]) => (v.head, v.last)}
+  }
+
+  def validateFileInputMode : Either[String, Unit] = {
+    if(inputMode.getOrElse("test") == "f" && userConf.isEmpty)
+      Left("User configuration file (--user-conf) is mandatory in file mode")
+    else
+      Right()
+  }
+
+  def validateCmdInputMode : Either[String, Unit] = {
+    if(inputMode.getOrElse("") == "c" && rootDir.isEmpty)
+      Left("Root directory (--root-dir) is mandatory in command line mode")
+    else
+      Right()
   }
 }
