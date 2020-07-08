@@ -68,14 +68,14 @@ In both cases the following settings should be determined:
 These data sources will be downloaded by default: `airTemperature, skinTemperature, minTemperature, maxTemperature, humidity, uwind, vwind, 
 clearSkyDownwardSolar, netShortwaveRadiation`
 
-Use gweather with a configuration file as next:
+*Example*: load configuration from file:
 ```commandline
 gweather -m f --user-conf <conf_file>
 ```
 
-Or via the command line:
+*Example*: determine settings via the command line:
 ```commandline
-gweather -m f -r /tmp/data/ -d 1 -f "csv" ...
+gweather -m c -r /tmp/data/ -d 1 -f "csv" ...
 ```
 
 **Attention:** when using command line mode, if any of the previous arguments is not specified gweather will use their default values.

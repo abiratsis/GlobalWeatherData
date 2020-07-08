@@ -17,7 +17,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
            |
            |Options:
            |""".stripMargin)
-  //todo: rename this to output dir
+
   val outputDir = opt[String](short = 'r', descr = "The output directory where the weather datasources will be exported.")
   val geoSparkDistance = opt[Int](default = Some(1), short = 'd', descr = "The distance between 2 GeoSpark points.")
   val mergeWinds = opt[Boolean](default = Some(true), short = 'w', descr = "A flag specifying whether winds speeds should be merged into one.")
@@ -64,7 +64,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
 
   def validateCmdInputMode : Either[String, Unit] = {
     if(inputMode.getOrElse("") == "c" && outputDir.isEmpty)
-      Left("Root directory (--root-dir) is mandatory in command line mode")
+      Left("Output directory (--output-dir) is mandatory in command line mode")
     else
       Right()
   }
