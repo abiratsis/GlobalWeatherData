@@ -30,7 +30,7 @@ object Main extends App {
   val pipeline = new Pipeline()
   pipeline.execute
 
-//  ctx.head.spark.read.parquet(userConfig.rootDir + "/geo_weather")
+//  ctx.head.spark.read.parquet(userConfig.outputDir + "/geo_weather")
 //    .where("country == 'Greece'")
 //    .show(1000)
 }

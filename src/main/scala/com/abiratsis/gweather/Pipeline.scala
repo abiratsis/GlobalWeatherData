@@ -41,7 +41,7 @@ class Pipeline(implicit context: Option[GeoWeatherContext]) {
       WorldDataset()(ctx).createWorldTable()
 
       val weatherAtLocationHandler = new WeatherAtLocationHandler()(ctx)
-      weatherAtLocationHandler.save(ctx.userConfig.rootDir, ctx.userConfig.exportFormat)
+      weatherAtLocationHandler.save(ctx.userConfig.outputDir, ctx.userConfig.exportFormat)
     }
     case None => throw new NullContextException
   }

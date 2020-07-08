@@ -18,7 +18,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
            |Options:
            |""".stripMargin)
   //todo: rename this to output dir
-  val rootDir = opt[String](short = 'r', descr = "The root directory where the weather datasources will be exported.")
+  val outputDir = opt[String](short = 'r', descr = "The output directory where the weather datasources will be exported.")
   val geoSparkDistance = opt[Int](default = Some(1), short = 'd', descr = "The distance between 2 GeoSpark points.")
   val mergeWinds = opt[Boolean](default = Some(true), short = 'w', descr = "A flag specifying whether winds speeds should be merged into one.")
   val mergeTemp = opt[Boolean](default = Some(true), short = 't', descr = "A flag specifying whether min/max temperatures should be merged into one.")
@@ -36,11 +36,11 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
 
   val userConf = opt[File](noshort = true, descr = "The path of the user configuration file.")
 
-  val inputMode = choice(choices= List("f", "c"), required = true, short = 'm', descr = "The input mode, config file or command line")
+  val inputMode = choice(choices= List("f", "c"), required = true, short = 'm', descr = "Where to get configuration from. Valid options are command line or config file")
 
   addValidation(validateFileInputMode)
   addValidation(validateCmdInputMode)
-  conflicts(userConf, List(rootDir, geoSparkDistance, mergeWinds, mergeTemp, exportFormat, temperatureScale, numericType, activeSources, startAt))
+  conflicts(userConf, List(outputDir, geoSparkDistance, mergeWinds, mergeTemp, exportFormat, temperatureScale, numericType, activeSources, startAt))
   validateFileExists(userConf)
   verify()
 
@@ -63,7 +63,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   }
 
   def validateCmdInputMode : Either[String, Unit] = {
-    if(inputMode.getOrElse("") == "c" && rootDir.isEmpty)
+    if(inputMode.getOrElse("") == "c" && outputDir.isEmpty)
       Left("Root directory (--root-dir) is mandatory in command line mode")
     else
       Right()

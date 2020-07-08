@@ -11,18 +11,18 @@ import pureconfig.generic.auto._
 
 case class WeatherTransformations(mergeWinds : Boolean, mergeTemperatures: Boolean)
 
-case class UserSettings (rootDir: String,
-                          geoSparkDistance: Int = 1,
-                          exportFormat: String = "parquet",
-                          weatherTransformations : WeatherTransformations = WeatherTransformations(true, true),
-                          spark: Map[String, Int] = Map("spark.executor.instances" -> 2, "spark.executor.cores" -> 4),
-                          activeSources: List[String] = List(
+case class UserSettings (outputDir: String,
+                         geoSparkDistance: Int = 1,
+                         exportFormat: String = "parquet",
+                         weatherTransformations : WeatherTransformations = WeatherTransformations(true, true),
+                         spark: Map[String, Int] = Map("spark.executor.instances" -> 2, "spark.executor.cores" -> 4),
+                         activeSources: List[String] = List(
                             "airTemperatureUrl", "minTemperatureUrl", "maxTemperatureUrl",
                             "humidityUrl", "uwindUrl", "vwindUrl",
                             "clearSkyDownwardSolarUrl", "netShortwaveRadiationUrl"),
-                          startAt: Int = 1,
-                          temperatureScale: String = "C",
-                          numericType: String = "double"
+                         startAt: Int = 1,
+                         temperatureScale: String = "C",
+                         numericType: String = "double"
                        ) {
 
   import com.abiratsis.gweather.common.String._
@@ -30,8 +30,8 @@ case class UserSettings (rootDir: String,
   val tscales: Set[String] = TemperatureScaleType.values.map{_.toString}
   val ntypes: Set[String] = CDFNumericType.values.map{_.toString}
 
-  require(!isNullOrEmpty(rootDir), "rootDir should be non empty string.")
-  require(new File(rootDir).isDirectory, "rootDir should be a valid directory.")
+  require(!isNullOrEmpty(outputDir), "rootDir should be non empty string.")
+  require(new File(outputDir).isDirectory, "rootDir should be a valid directory.")
   require(geoSparkDistance >= 1, "geoSparkDistance must be >= 1.")
   require(formats.contains(exportFormat), s"Format should be one of the [${formats.mkString(",")}]")
   require(weatherTransformations != null, "weatherTransformations can't be null.")
@@ -47,7 +47,7 @@ case class UserSettings (rootDir: String,
     s"""
        |User configuration
        |====================
-       |rootDir:$rootDir
+       |rootDir:$outputDir
        |geoSparkDistance: $geoSparkDistance
        |exportFormat: $exportFormat
        |weatherTransformations: $weatherTransformations

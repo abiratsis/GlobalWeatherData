@@ -9,7 +9,7 @@ import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
 class GeoWeatherContext(val appConfig : ApplicationSettings, val userConfig: UserSettings){
   lazy val downloadDirs = Util.ccToMap(appConfig.directories).mapValues{
-    case dir : String => Paths.get(userConfig.rootDir, dir).toString
+    case dir : String => Paths.get(userConfig.outputDir, dir).toString
   }
   lazy val downloadSourceUrls = Util.ccToMap(appConfig.sourceUrls)
 

@@ -6,13 +6,19 @@ A command line tool/library that helps users to work with climate data from all 
 GWeather it is a tool for retrieving, exporting and viewing world weather data. The application provides world climate data
 for wind, temperature, humidity and solar radiation.
 
+Currently, GWeather supports the following features:
+   1. Download climate datasets from [PSL](https://psl.noaa.gov/)
+   2. Download cities/countries dataset from [simplemaps.com](https://simplemaps.com/data/world-cities)
+   3. Merge/join above datasets by location's coordinates
+   4. Export merged data
+
 ### Purpose
 
 Recently I worked on a project for analyzing climate geo-spacial data. Quickly I realized that I was not able
 to find an open-source tool which combines reliable weather data with accurate geographical locations. 
-Most of the existing datasets provide the weather data using geographical coordinates and not the actual
-text representation of the location e.g `city/country`. The main purpose is to join the weather dataset together 
-with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process. Also,
+Most of the existing datasets provide the weather data using numeric coordinates (lon, lat) and not the actual
+text representation of the location e.g `city/country`. The main purpose of the project, is to join the weather dataset together 
+with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process. Furthermore,
 the application should support exporting data in different popular formats e.g CSV, parquet, delta-lake, etc.
 
 I came up with GWeather having in mind the next goals:
@@ -22,10 +28,6 @@ I came up with GWeather having in mind the next goals:
  - Calculate efficiently geo-spacial operations
  - Provide a friendly Scala based API
  - Provide a friendly command line interface
-
-TODO: add input dataset
-
-TODO: add final dataset
 
 ### Usage
  
@@ -39,26 +41,32 @@ Before using GWeather please make sure you have the next packages installed on y
 #### Installation
 
 1. Download [gweather_v0.1.0-alpha.zip](https://github.com/abiratsis/GlobalWeatherData/releases/download/v0.1.0-alpha/gweather_v0.1.0-alpha.zip)
-2. Unzip the gweather_v0.1.0-alpha.zip.
+2. Unzip gweather_v0.1.0-alpha.zip.
 3. Grant execute permission to `gweather.sh` with `chmod +x gweather.sh`
-4. Execute the program `./gweather [options]`
+4. Execute the program `./gweather.sh [options]`
 
 #### Configuration
 
-Users can determine the program settings via the command line (`--input-mode c`) or via a config file (`--input-mode f`).
-In both cases users should provide the following settings:
+Users can set program's settings via the command line (`--input-mode c`) or through a config file (`--input-mode f`).
+In both cases the following settings should be determined:
 
-```commandline
-rootDir (-r): The root directory where the weather datasources will be exported
-geoSparkDistance (-d): The distance between 2 GeoSpark points
-mergeWinds (-w): A flag indicating whether winds speeds should be merged into one
-mergeTemp (-t): A flag indicating whether min/max temperatures should be merged into one
-exportFormat (-f): Type of exported data, it should be one of [delta, orc, parquet, csv]
-temperatureScale (-l): Temperature scale, it should be one of [C, F]
-numericType (-n): The numeric type for CDF columns, it should be one of [double, float]
-activeSources (-a): The sources that should be exported by the program
-startAt (-s): The step the process should start from. The available steps are: install prerequisites(1), download data(2), convert to CSV(3), export(4)
-```
+
+| Argument            | Short | Required          | Default      | Description |
+|:--------------------| ----- |-------------------| ------------- |  ------------ |
+| inputMode           | -m   | yes               | -           | Where to get configuration from. Valid options are [c <command_line>, f <config_file>] |
+| outputDir           | -o   | yes (in cmd mode only) | -      | The output directory where the weather datasources will be exported |
+| geoSparkDistance    | -d   | no                | 1           | The distance between 2 GeoSpark points |
+| mergeWinds          | -w   | no                | true        | A flag indicating whether winds speeds should be merged into one|
+| mergeTemp           | -t   | no                | true        | A flag indicating whether min/max temperatures should be merged into one |
+| exportFormat        | -f   | no                | parquet     | Type of exported data, it should be one of [delta, orc, parquet, csv] |
+| temperatureScale    | -l   | no                | C           | Temperature scale, it should be one of [C <celcius>, F <farenheit>] |
+| numericType         | -n   | no                | double      | The numeric type for CDF columns, it should be one of [double, float] |
+| activeSources       | -a   | no                | (see below) | The data sources that should be exported by the program |
+| startAt             | -s   | no                | 1           | The step the process should start from. The available steps are: install prerequisites(1), download data(2), convert to CSV(3), export(4) |
+
+
+These data sources will be downloaded by default: `airTemperature, skinTemperature, minTemperature, maxTemperature, humidity, uwind, vwind, 
+clearSkyDownwardSolar, netShortwaveRadiation`
 
 Use gweather with a configuration file as next:
 ```commandline
@@ -69,21 +77,8 @@ Or via the command line:
 ```commandline
 gweather -m f -r /tmp/data/ -d 1 -f "csv" ...
 ```
-**Attention:** be aware that once you specify `--user-conf` (running with config mode) argument you should not add more arguments
-since they are mutually exclusive. 
 
-When using command line mode, if some of the arguments are not specified gweather will use the following default values:
-```commandline
-rootDir: none
-geoSparkDistance: 1
-mergeWinds: true
-mergeTemp: true
-exportFormat: parquet
-temperatureScale: "C"
-numericType: "double"
-activeSources: ["airTemperature", "skinTemperature", "minTemperature", "maxTemperature", "humidity", "uwind", "vwind", "clearSkyDownwardSolar", "netShortwaveRadiation"]
-startAt: "1"
-```
+**Attention:** when using command line mode, if any of the previous arguments is not specified gweather will use their default values.
 
 #### Scala API
 TODO
@@ -118,9 +113,8 @@ Weather components used by GWeather:
    - Net longwave radiation ([source](https://psl.noaa.gov/cgi-bin/db_search/DBSearch.pl?Dataset=NCEP+Reanalysis+Daily+Averages&Variable=Net+longwave+radiation+flux))
    - Net shortwave radiation ([source](https://psl.noaa.gov/cgi-bin/db_search/DBSearch.pl?Dataset=NCEP+Reanalysis+Daily+Averages&Variable=Net+shortwave+radiation+flux))
 
-PSL uses [netCDF](https://psl.noaa.gov/data/gridded/whatsnetCDF.html) for storing the data. GWeather
-can convert the netCDF data into different formats. Currently, we support CSV, Apache Parquet, 
-Apache ORC and Apache delta-lake.
+PSL stores data in [netCDF](https://psl.noaa.gov/data/gridded/whatsnetCDF.html). GWeather converts netCDF data into different formats. 
+Currently, we support CSV, Apache Parquet, Apache ORC and Apache delta-lake.
 
 #### World data
 
