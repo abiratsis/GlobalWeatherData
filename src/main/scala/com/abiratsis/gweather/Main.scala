@@ -3,8 +3,6 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather.common.{CommandLineInput, GeoWeatherContext}
 import com.abiratsis.gweather.config.{ApplicationSettings, UserSettings}
 
-//todo: fix missing data (Missing data is flagged with a value of -9.96921e+36f.
-// link: https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html
 object Main extends App {
   val userInput = new CommandLineInput(args)
   var userConfig: UserSettings = _
@@ -26,11 +24,11 @@ object Main extends App {
   val appConfig = ApplicationSettings()
 
   implicit val ctx = Some(GeoWeatherContext(appConfig, userConfig))
-//
+
   val pipeline = new Pipeline()
   pipeline.execute
 
   ctx.head.spark.read.parquet(userConfig.outputDir + "/export")
-    .where("country == 'Greece'")
+    .where("Country == 'Greece'")
     .show(1000)
 }

@@ -4,7 +4,7 @@ import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import com.abiratsis.gweather.exceptions.NullContextException
 import com.abiratsis.gweather.spark.{GeoDataset, implicits}
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.{col, month}
+import org.apache.spark.sql.functions.{col, lit, month}
 import org.apache.spark.sql.types.DoubleType
 
 private[spark] trait WeatherDataset extends GeoDataset {
@@ -95,6 +95,19 @@ object WeatherDataset {
     df.schema.fields.filter(_.dataType == DoubleType).foldLeft(df) {
       case (df, c) => df.withColumn(c.name, df(c.name).cast("float"))
     }
+  }
+
+  /**
+   * Removes missing data (Missing data is flagged with a value of -9.96921e+36f.
+   * link: https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html
+   *
+   * @param wcols Weather columns
+   * @param df Target dataframe
+   */
+  def cleanMissingData(wcols : List[String])(df: DataFrame) = {
+    val f = -99692136
+    val filterMissingData = wcols.map(col).reduce(_ =!= lit(f) and _ =!= lit(f))
+    df.where(filterMissingData)
   }
 }
 

@@ -70,7 +70,9 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
     if (ctx.userConfig.numericType == CDFNumericType.float.toString)
       weatherDf = weatherDf.transform(WeatherDataset.toFloat)
 
-    weatherDf.write
+    weatherDf
+      .transform(WeatherDataset.cleanMissingData(weatherCols.toList))
+      .write
       .format(format)
       .option("header", "true")
       .mode("overwrite")
