@@ -18,7 +18,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
            |Options:
            |""".stripMargin)
 
-  val outputDir = opt[String](short = 'r', descr = "The output directory where the weather datasources will be exported.")
+  val outputDir = opt[String](short = 'o', descr = "The output directory where the weather datasources will be exported.")
   val geoSparkDistance = opt[Int](default = Some(1), short = 'd', descr = "The distance between 2 GeoSpark points.")
   val mergeWinds = opt[Boolean](default = Some(true), short = 'w', descr = "A flag specifying whether winds speeds should be merged into one.")
   val mergeTemp = opt[Boolean](default = Some(true), short = 't', descr = "A flag specifying whether min/max temperatures should be merged into one.")

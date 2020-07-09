@@ -30,8 +30,8 @@ case class UserSettings (outputDir: String,
   val tscales: Set[String] = TemperatureScaleType.values.map{_.toString}
   val ntypes: Set[String] = CDFNumericType.values.map{_.toString}
 
-  require(!isNullOrEmpty(outputDir), "rootDir should be non empty string.")
-  require(new File(outputDir).isDirectory, "rootDir should be a valid directory.")
+  require(!isNullOrEmpty(outputDir), "outputDir should be non empty string.")
+  require(new File(outputDir).isDirectory, "outputDir should be a valid directory.")
   require(geoSparkDistance >= 1, "geoSparkDistance must be >= 1.")
   require(formats.contains(exportFormat), s"Format should be one of the [${formats.mkString(",")}]")
   require(weatherTransformations != null, "weatherTransformations can't be null.")

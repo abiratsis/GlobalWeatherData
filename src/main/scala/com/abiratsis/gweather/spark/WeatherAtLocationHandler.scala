@@ -1,5 +1,7 @@
 package com.abiratsis.gweather.spark
 
+import java.nio.file.Paths
+
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import com.abiratsis.gweather.spark.weather.{CDFNumericType, HumidityDataset, SolarDataset, TemperatureDataset, TemperatureScaleType, WeatherDataset, WindDataset}
 
@@ -52,10 +54,10 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
         HumidityDataset.netCDFFields.values ++
         SolarDataset.netCDFFields.values
 
-    Util.deleteDir(destination + "geo_weather")
+    val exportPath = Paths.get(destination, "/export").toString
+    Util.deleteDir(exportPath)
 
     var weatherDf = getWeatherByLocation(weatherCols.toSeq, ctx.userConfig.geoSparkDistance)
-
     if (ctx.userConfig.temperatureScale == TemperatureScaleType.celsius.toString)
       weatherDf = weatherDf.transform(TemperatureDataset.convertToCelcious)
 
@@ -72,6 +74,6 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
       .format(format)
       .option("header", "true")
       .mode("overwrite")
-      .save(destination + "geo_weather")
+      .save(exportPath)
   }
 }

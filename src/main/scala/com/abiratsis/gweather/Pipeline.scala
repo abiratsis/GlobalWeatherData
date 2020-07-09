@@ -48,11 +48,10 @@ class Pipeline(implicit context: Option[GeoWeatherContext]) {
 
   def execute = context match {
     case Some(ctx) => {
-      val startAt = ExecutionStep(ctx.userConfig.startAt.toInt)
+      val startAt = ExecutionStep(ctx.userConfig.startAt)
 
       if (startAt.id == 1)
         this.installPrerequisites
-
       if (startAt.id <= 2)
         this.downloadData
 
