@@ -38,7 +38,7 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
    * @param destination
    * @param format One of the {delta, orc, parquet, csv}
    */
-  def save(destination: String, format: String = "delta") = {
+  def save(destination: String, format: String = "delta"): Unit = {
     val formats = Set("delta", "orc", "parquet", "csv")
     if (!formats.contains(format))
       throw new IllegalArgumentException(s"Format should be one of the:${formats.mkString(",")}")

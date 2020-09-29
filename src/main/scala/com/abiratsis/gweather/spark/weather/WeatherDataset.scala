@@ -1,8 +1,8 @@
 package com.abiratsis.gweather.spark.weather
 
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
-import com.abiratsis.gweather.spark.{GeoDataset, implicits}
-import org.apache.spark.sql.DataFrame
+import com.abiratsis.gweather.spark.{GeoDataset, implicits, weather}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.functions.{col, lit, month}
 import org.apache.spark.sql.types.DoubleType
 
@@ -28,7 +28,7 @@ private[spark] trait WeatherDataset extends GeoDataset {
       (df1, df2) =>
         df1.join(df2, commonCols, "inner").drop(commonCols.map(c => df2(c)))
     }.transform {
-      toGeoData()
+      toGeoData
     }.transform {
       toWeatherData(netCDFFields.values.toSeq: _*)
     }
@@ -37,8 +37,8 @@ private[spark] trait WeatherDataset extends GeoDataset {
   /**
    * Removes .nc and .csv files. The method is called after saveAsDelta has succeeded.
    */
-  override def cleanUp: Unit = {
-    super.cleanUp
+  override def cleanUp(): Unit = {
+    super.cleanUp()
     netCDFSources.foreach{ case (_, path) => Util.deleteFile(path) }
   }
 
@@ -100,7 +100,7 @@ object WeatherDataset {
    * @param wcols Weather columns
    * @param df Target dataframe
    */
-  def cleanMissingData(wcols : List[String])(df: DataFrame) = {
+  def cleanMissingData(wcols : List[String])(df: DataFrame): Dataset[Row] = {
     val f = -99692136
     val filterMissingData = wcols.map(col).reduce(_ =!= lit(f) and _ =!= lit(f))
     df.where(filterMissingData)
@@ -109,6 +109,6 @@ object WeatherDataset {
 
 object CDFNumericType extends Enumeration {
   type CDFNumericType = Value
-  val double = Value("double")
-  val float = Value("float")
+  val double: weather.CDFNumericType.Value = Value("double")
+  val float: weather.CDFNumericType.Value = Value("float")
 }

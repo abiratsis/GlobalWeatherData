@@ -17,13 +17,13 @@ private[spark] class WorldDataset(val spark: SparkSession)
       .csv(path)
       .filter(col("lng").isNotNull)
       .withColumnRenamed("lng", "lon")
-      .transform(toGeoData())
+      .transform(toGeoData)
       .select("city_ascii", "geom", "country", "iso3")
       .withColumnRenamed("city_ascii", "city")
   }
 
-  override def cleanUp: Unit = {
-    super.cleanUp
+  override def cleanUp(): Unit = {
+    super.cleanUp()
 
     Util.deleteFile(s"${WorldDataset.downloadDir}/license.txt")
     Util.deleteFile(s"${WorldDataset.downloadDir}/worldcities.xlsx")
@@ -46,7 +46,7 @@ object WorldDataset extends GeoMetadata {
     new WorldDataset(dsCtx.spark)
   }
 
-  lazy val downloadDir = ctx.downloadDirs("worldDir")
+  lazy val downloadDir: String = ctx.downloadDirs("worldDir")
   lazy val sourceKeys: Set[String] = Set("worldCountries")
   lazy val csvSources: Map[String, String] = ctx.activeLocalCsvSources.filterKeys(sourceKeys.contains)
 }

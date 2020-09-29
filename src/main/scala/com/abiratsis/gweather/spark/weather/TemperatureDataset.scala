@@ -2,6 +2,7 @@ package com.abiratsis.gweather.spark.weather
 
 import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.exceptions.NullContextException
+import com.abiratsis.gweather.spark.weather
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 private[spark] class TemperatureDataset(val spark: SparkSession)
@@ -63,6 +64,6 @@ object TemperatureDataset extends WeatherMetadata{
 
 object TemperatureScaleType extends Enumeration {
   type TemperatureScaleType = Value
-  val celsius = Value("C")
-  val fahrenheit = Value("F")
+  val celsius: weather.TemperatureScaleType.Value = Value("C")
+  val fahrenheit: weather.TemperatureScaleType.Value = Value("F")
 }

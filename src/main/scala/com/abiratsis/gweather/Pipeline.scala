@@ -1,5 +1,6 @@
 package com.abiratsis.gweather
 
+import com.abiratsis.gweather
 import com.abiratsis.gweather.common.GeoWeatherContext
 
 class Pipeline (val ctx: GeoWeatherContext) {
@@ -7,12 +8,12 @@ class Pipeline (val ctx: GeoWeatherContext) {
 
   private val shell = ShellCommand
 
-  private def installPrerequisites : Unit = {
+  private def installPrerequisites() : Unit = {
     val installPrerequisitesCommand = new InstallPrerequisitesCommand()
     installPrerequisitesCommand.execute()
   }
 
-  private def downloadData : Unit = {
+  private def downloadData() : Unit = {
       val mergedDirsParams = shell.getParams(ctx.downloadDirs, shell.dirCommandLineParams)
       val mergedSourcesParams = shell.getParams(ctx.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
@@ -20,7 +21,7 @@ class Pipeline (val ctx: GeoWeatherContext) {
       downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams: _*)
   }
 
-  private def convertToCsv : Unit = {
+  private def convertToCsv() : Unit = {
     val ncToCsvParams = shell.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
     val ncToCsvCmd = new NcToCsvCommand()
 
@@ -38,18 +39,18 @@ class Pipeline (val ctx: GeoWeatherContext) {
     weatherAtLocationHandler.save(ctx.userConfig.outputDir, ctx.userConfig.exportFormat)
   }
 
-  def execute() = {
+  def execute(): Unit = {
       val startAt = ExecutionStep(ctx.userConfig.startAt)
 
       if (startAt.id == 1)
-        this.installPrerequisites
+        this.installPrerequisites()
       if (startAt.id <= 2)
-        this.downloadData
+        this.downloadData()
 
       if (startAt.id <= 3)
-        this.convertToCsv
+        this.convertToCsv()
 
-      this.exportGeoWeatherData
+      this.exportGeoWeatherData()
   }
 }
 
@@ -64,8 +65,8 @@ object Pipeline {
 
 object ExecutionStep extends Enumeration {
   type ExecutionStep = Value
-  val instPre = Value(1)
-  val downData = Value(2)
-  val toCsv = Value(3)
-  val expData = Value(4)
+  val instPre: gweather.ExecutionStep.Value = Value(1)
+  val downData: gweather.ExecutionStep.Value = Value(2)
+  val toCsv: gweather.ExecutionStep.Value = Value(3)
+  val expData: gweather.ExecutionStep.Value = Value(4)
 }

@@ -18,7 +18,7 @@ private trait GeoDataset {
   /**
    * Removes .nc and .csv files. The method is called after saveAsDelta has succeeded.
    */
-  def cleanUp= csvSources.foreach{ case (_, path) => Util.deleteFile(path) }
+  def cleanUp(): Unit = csvSources.foreach{ case (_, path) => Util.deleteFile(path) }
 
   /**
    * Transforms the underlying dataframe into a GeoSpacial dataframe.
@@ -26,7 +26,7 @@ private trait GeoDataset {
    *
    * @return A dataframe that contains geo-spacial columns.
    */
-  protected def toGeoData(): DataFrame => DataFrame = {
+  protected def toGeoData: DataFrame => DataFrame = {
     df =>
       df.withColumn("lon", col("lon").cast("Decimal(24,20)"))
         .withColumn("lat", col("lat").cast("Decimal(24,20)"))
