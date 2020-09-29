@@ -112,7 +112,16 @@ active-sources = [
 ```
 
 #### Scala API
-If you like to use GWeather as a library call the Pipeline/PipelineBuilder classes as shown next:
+If you like to use GWeather as a library first import the required dependency by adding the following lines
+to your build.sbt file:
+
+```sbt
+externalResolvers += "GWeather" at "https://maven.pkg.github.com/abiratsis/GlobalWeatherData"
+
+libraryDependencies += "abiratsis" %% "globalweatherdata" % "0.1.0"
+```
+
+Now you will be able to call the `Pipeline/PipelineBuilder` classes as shown next:
 
 ```scala
 import com.abiratsis.gweather

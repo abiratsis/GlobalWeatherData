@@ -3,7 +3,7 @@ package com.abiratsis.gweather
 import com.abiratsis.gweather
 import com.abiratsis.gweather.common.GeoWeatherContext
 
-class Pipeline (val ctx: GeoWeatherContext) {
+class Pipeline private (val ctx: GeoWeatherContext) {
   import com.abiratsis.gweather.shell.commands.{DownloadCommand, InstallPrerequisitesCommand, NcToCsvCommand, ShellCommand}
 
   private val shell = ShellCommand

@@ -1,4 +1,5 @@
 name := "GlobalWeatherData"
+organization := "abiratsis"
 
 version := "0.1.0"
 
@@ -10,6 +11,10 @@ resolvers ++= Seq(
   "maven" at "https://repo1.maven.org/maven2/",
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
+
+//https://medium.com/@supermanue/how-to-publish-a-scala-library-in-github-bfb0fa39c1e4
+githubOwner := "abiratsis"
+githubRepository := "GlobalWeatherData"
 
 libraryDependencies ++= Seq(
   //Spark
