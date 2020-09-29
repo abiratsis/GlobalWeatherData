@@ -18,7 +18,7 @@ Recently I worked on a project for analyzing climate geo-spacial data. Quickly I
 to find an open-source tool which combines reliable weather data with accurate geographical locations. 
 Most of the existing datasets provide the weather data using numeric coordinates (lon, lat) and not the actual
 text representation of the location e.g `city/country`. The main purpose of the project, is to join the weather dataset together 
-with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process. Furthermore,
+with the locations' dataset in order to create a readable dataset, which will be easier to analyze and process. Furthermore,
 the application should support exporting data in different popular formats e.g CSV, parquet, delta-lake, etc.
 
 I came up with GWeather having in mind the next goals:
@@ -80,8 +80,59 @@ gweather -m c -r /tmp/data/ -d 1 -f "csv" ...
 
 **Attention:** when using command line mode, if any of the previous arguments is not specified gweather will use their default values.
 
+If you decide to run the application using a config file please consider the next [HOCON](https://en.wikipedia.org/wiki/HOCON) config sample as reference:
+
+```hocon
+root-dir = "/tmp/"
+geo-spark-distance = 1
+export-format = "parquet"
+start-at = 4
+temperature-scale = "C"
+numeric-type = "float"
+
+merge-winds = true
+merge-temperatures = true
+
+spark {
+  "spark.executor.instances": 2,
+  "spark.executor.cores": 4
+}
+
+active-sources = [
+    "airTemperature",
+    "skinTemperature",
+    "minTemperature",
+    "maxTemperature"
+    "humidity",
+    "uwind",
+    "vwind",
+    "clearSkyDownwardSolar",
+    "netShortwaveRadiation"
+]
+```
+
 #### Scala API
-TODO
+If you like to use GWeather as a library call the Pipeline/PipelineBuilder classes as shown next:
+
+```scala
+import com.abiratsis.gweather
+
+....
+
+    val pipeline = new PipelineBuilder()
+      .withParameter("output-dir", "/Users/some_user/export_29_09_2020/")
+      .withParameter("geo-spark-distance", 1)
+      .withParameter("export-format", "parquet")
+      .withParameter("merge-winds", true)
+      .build()
+
+    pipeline.execute()
+
+    pipeline.ctx.spark.read.parquet(pipeline.ctx.userConfig.outputDir + "/export")
+      .where("Country == 'Greece'")
+      .show(1000)
+
+```
 
 ### Datasets: weather & locations
 
