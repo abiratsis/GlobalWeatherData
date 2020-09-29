@@ -44,7 +44,7 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   validateFileExists(userConf)
   verify()
 
-  def getInputToMap() : Map[String, String] = {
+  def getInputToMap() : Map[String, Any] = {
     val userInputMap = args.sliding(2, 2).map(a => (a.head.last, a.last)).toMap
     val optionsMap = builder.opts.filter{
       p => p.shortNames.nonEmpty && userInputMap.contains(p.shortNames(0))
@@ -59,13 +59,13 @@ class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
     if(inputMode.getOrElse("test") == "f" && userConf.isEmpty)
       Left("User configuration file (--user-conf) is mandatory in file mode")
     else
-      Right()
+      Right(())
   }
 
   def validateCmdInputMode : Either[String, Unit] = {
     if(inputMode.getOrElse("") == "c" && outputDir.isEmpty)
       Left("Output directory (--output-dir) is mandatory in command line mode")
     else
-      Right()
+      Right(())
   }
 }

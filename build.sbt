@@ -68,5 +68,7 @@ postBuild := {
 
 Compile / packageBin := (Compile / packageBin dependsOn postBuild).value
 
+scalacOptions := Seq("-deprecation", "-feature")
+
 exportJars := true
 logBuffered in Test := false

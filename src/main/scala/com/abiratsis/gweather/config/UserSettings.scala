@@ -9,12 +9,11 @@ import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.generic.auto._
 
-case class WeatherTransformations(mergeWinds : Boolean, mergeTemperatures: Boolean)
-
 case class UserSettings (outputDir: String,
                          geoSparkDistance: Int = 1,
                          exportFormat: String = "parquet",
-                         weatherTransformations : WeatherTransformations = WeatherTransformations(true, true),
+                         mergeWinds: Boolean = true,
+                         mergeTemperatures: Boolean = true,
                          spark: Map[String, Int] = Map("spark.executor.instances" -> 2, "spark.executor.cores" -> 4),
                          activeSources: List[String] = List(
                             "airTemperatureUrl", "minTemperatureUrl", "maxTemperatureUrl",
@@ -34,7 +33,6 @@ case class UserSettings (outputDir: String,
   require(new File(outputDir).isDirectory, "outputDir should be a valid directory.")
   require(geoSparkDistance >= 1, "geoSparkDistance must be >= 1.")
   require(formats.contains(exportFormat), s"Format should be one of the [${formats.mkString(",")}]")
-  require(weatherTransformations != null, "weatherTransformations can't be null.")
   require(spark.nonEmpty && spark.contains("spark.executor.instances"), "spark.executor.instances can't be empty.")
   require(spark.nonEmpty && spark.contains("spark.executor.cores"), "spark.executor.cores can't be empty.")
   require(activeSources.nonEmpty, "activeSources can't be empty.")
@@ -50,7 +48,8 @@ case class UserSettings (outputDir: String,
        |rootDir:$outputDir
        |geoSparkDistance: $geoSparkDistance
        |exportFormat: $exportFormat
-       |weatherTransformations: $weatherTransformations
+       |mergeWinds: $mergeWinds
+       |mergeTemperatures: $mergeTemperatures
        |spark: $spark
        |activeSources: $activeSources
        |startAt: ${ExecutionStep(startAt).toString}
@@ -70,7 +69,7 @@ object UserSettings{
     }
   }
 
-  def apply(inputMap: Map[String, String]): UserSettings = {
+  def apply(inputMap: Map[String, Any]): UserSettings = {
     val defaultUserConf = ConfigSource.resources(resourceName)
     val currentUserConf = ConfigSource.string(inputMap.toJson).withFallback(defaultUserConf).load[UserSettings]
 

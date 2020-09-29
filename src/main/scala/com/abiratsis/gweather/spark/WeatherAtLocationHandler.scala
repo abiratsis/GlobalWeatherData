@@ -61,10 +61,10 @@ class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
     if (ctx.userConfig.temperatureScale == TemperatureScaleType.celsius.toString)
       weatherDf = weatherDf.transform(TemperatureDataset.convertToCelcious)
 
-    if (ctx.userConfig.weatherTransformations.mergeWinds)
+    if (ctx.userConfig.mergeWinds)
       weatherDf = weatherDf.transform(WindDataset.mergeWindSpeed)
 
-    if (ctx.userConfig.weatherTransformations.mergeTemperatures)
+    if (ctx.userConfig.mergeTemperatures)
       weatherDf = weatherDf.transform(TemperatureDataset.mergeMaxMinTemperatures)
 
     if (ctx.userConfig.numericType == CDFNumericType.float.toString)

@@ -1,12 +1,10 @@
 package com.abiratsis.gweather
 
 import com.abiratsis.gweather.common.GeoWeatherContext
-import com.abiratsis.gweather.exceptions.NullContextException
-import com.abiratsis.gweather.shell.commands.{DownloadCommand, InstallPrerequisitesCommand, NcToCsvCommand, ShellCommand}
-import com.abiratsis.gweather.spark.{WeatherAtLocationHandler, WorldDataset}
-import com.abiratsis.gweather.spark.weather.WeatherDataset
 
-class Pipeline(implicit context: Option[GeoWeatherContext]) {
+class Pipeline (val ctx: GeoWeatherContext) {
+  import com.abiratsis.gweather.shell.commands.{DownloadCommand, InstallPrerequisitesCommand, NcToCsvCommand, ShellCommand}
+
   private val shell = ShellCommand
 
   private def installPrerequisites : Unit = {
@@ -14,40 +12,33 @@ class Pipeline(implicit context: Option[GeoWeatherContext]) {
     installPrerequisitesCommand.execute()
   }
 
-  private def downloadData : Unit = context match {
-    case Some(ctx) => {
+  private def downloadData : Unit = {
       val mergedDirsParams = shell.getParams(ctx.downloadDirs, shell.dirCommandLineParams)
       val mergedSourcesParams = shell.getParams(ctx.activeDownloadSourceUrls, shell.sourcesCommandLineParams)
 
       val downloadCmd = new DownloadCommand()
       downloadCmd.execute(mergedDirsParams ++ mergedSourcesParams: _*)
-    }
-    case None => throw new NullContextException
   }
 
-  private def convertToCsv : Unit = context match {
-    case Some(ctx) => {
-      val ncToCsvParams = shell.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
+  private def convertToCsv : Unit = {
+    val ncToCsvParams = shell.getParams(ctx.activeLocalSources, shell.sourcesCommandLineParams)
+    val ncToCsvCmd = new NcToCsvCommand()
 
-      val ncToCsvCmd = new NcToCsvCommand()
-      ncToCsvCmd.execute(ncToCsvParams: _*)
-    }
-    case None => throw new NullContextException
+    ncToCsvCmd.execute(ncToCsvParams: _*)
   }
 
-  private def exportGeoWeatherData() : Unit = context match {
-    case Some(ctx) => {
-      WeatherDataset.mergeAndCreateWeatherTable()
-      WorldDataset()(ctx).createWorldTable()
+  private def exportGeoWeatherData() : Unit = {
+    import com.abiratsis.gweather.spark.weather.WeatherDataset
+    import com.abiratsis.gweather.spark.{WeatherAtLocationHandler, WorldDataset}
 
-      val weatherAtLocationHandler = new WeatherAtLocationHandler()(ctx)
-      weatherAtLocationHandler.save(ctx.userConfig.outputDir, ctx.userConfig.exportFormat)
-    }
-    case None => throw new NullContextException
+    WeatherDataset.mergeAndCreateWeatherTable()(ctx)
+    WorldDataset()(ctx).createWorldTable()
+
+    val weatherAtLocationHandler = new WeatherAtLocationHandler()(ctx)
+    weatherAtLocationHandler.save(ctx.userConfig.outputDir, ctx.userConfig.exportFormat)
   }
 
-  def execute = context match {
-    case Some(ctx) => {
+  def execute() = {
       val startAt = ExecutionStep(ctx.userConfig.startAt)
 
       if (startAt.id == 1)
@@ -59,7 +50,14 @@ class Pipeline(implicit context: Option[GeoWeatherContext]) {
         this.convertToCsv
 
       this.exportGeoWeatherData
-    }
+  }
+}
+
+object Pipeline {
+  import com.abiratsis.gweather.exceptions.NullContextException
+
+  def apply()(implicit ctx: Option[GeoWeatherContext]): Pipeline = ctx match {
+    case Some(ctx) => new Pipeline(ctx)
     case None => throw new NullContextException
   }
 }

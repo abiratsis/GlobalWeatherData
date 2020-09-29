@@ -1,7 +1,6 @@
 package com.abiratsis.gweather.spark.weather
 
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
-import com.abiratsis.gweather.exceptions.NullContextException
 import com.abiratsis.gweather.spark.{GeoDataset, implicits}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{col, lit, month}
@@ -62,8 +61,7 @@ private[spark] trait WeatherDataset extends GeoDataset {
 }
 
 object WeatherDataset {
-  def mergeAndCreateWeatherTable()(implicit context: Option[GeoWeatherContext]): DataFrame = context match {
-    case Some(ctx) => {
+  def mergeAndCreateWeatherTable()(implicit ctx: GeoWeatherContext): DataFrame = {
       val tempDf = TemperatureDataset()(ctx).load()
       val humDf = HumidityDataset()(ctx).load()
       val windDf = WindDataset()(ctx).load()
@@ -87,8 +85,6 @@ object WeatherDataset {
 
       weatherDf.createOrReplaceTempView("weather_tbl")
       weatherDf
-    }
-    case None => throw new NullContextException
   }
 
   def toFloat(df: DataFrame): DataFrame = {
