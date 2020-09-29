@@ -48,11 +48,11 @@ assemblyMergeStrategy in assembly := {
 lazy val postBuild  = taskKey[Unit]("post build")
 postBuild := {
   val log = streams.value.log
-  val shellSource = (baseDirectory.value / "scripts/download_weather.sh")
+  val shellSource = baseDirectory.value / "scripts/download_weather.sh"
   val shellTarget = crossTarget.value / "scripts/download_weather.sh"
-  val pySource = (baseDirectory.value / "scripts/nc_to_csv.py")
+  val pySource = baseDirectory.value / "scripts/nc_to_csv.py"
   val pyTarget = crossTarget.value / "scripts/nc_to_csv.py"
-  val execScriptSource = (baseDirectory.value / "scripts/gweather.sh")
+  val execScriptSource = baseDirectory.value / "scripts/gweather.sh"
   val execScriptTarget = crossTarget.value / "gweather.sh"
 
   log.info(s"Copying ${shellSource.getPath} to ${shellTarget.getPath}")

@@ -17,8 +17,8 @@ object Util {
    * @param cc The case class
    * @return The map that contains the class members
    */
-  def ccToMap(cc: AnyRef) =
-    (Map[String, Any]() /: cc.getClass.getDeclaredFields) {
+  def ccToMap(cc: AnyRef): Map[String, Any] =
+    cc.getClass.getDeclaredFields.foldLeft(Map[String, Any]()) {
       (a, f) =>
         f.setAccessible(true)
         a + (f.getName -> f.get(cc))
@@ -34,7 +34,7 @@ object Util {
     Paths.get(url).getFileName.toString
   }
 
-  def deleteDir(dir: String) = {
+  def deleteDir(dir: String): Unit = {
     val directory = new Directory(new File(dir))
 
     if(directory.exists) {
@@ -51,9 +51,9 @@ object Util {
     }
   }
 
-  def deleteFile(path: String) = new File(path).delete()
+  def deleteFile(path: String): Boolean = new File(path).delete()
 
-  def isNullOrEmpty[T](s: Iterable[T]) = s match {
+  def isNullOrEmpty[T](s: Iterable[T]): Boolean = s match {
     case null => true
     case _ => s.toSeq.isEmpty
   }

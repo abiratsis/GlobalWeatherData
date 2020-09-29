@@ -5,7 +5,7 @@ import com.abiratsis.gweather.shell.ShellProxy
 import com.abiratsis.gweather.common.implicits._
 import com.abiratsis.gweather.exceptions.NullOrEmptyArgumentException
 
-private trait ShellCommand {
+private[gweather] trait ShellCommand {
   /**
    * The function name in the shell script.
    *

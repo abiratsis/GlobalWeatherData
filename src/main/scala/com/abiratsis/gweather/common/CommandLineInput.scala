@@ -52,7 +52,7 @@ private[gweather] class CommandLineInput(args: Seq[String]) extends ScallopConf(
       o => (o.shortNames(0), o.name)
     }.toMap
 
-    optionsMap.join(userInputMap).map{case (_,v : Seq[String]) => (v.head, v.last)}
+    optionsMap.join(userInputMap).map{case (_,v : Seq[_]) => (v.head.asInstanceOf[String], v.last)}
   }
 
   def validateFileInputMode : Either[String, Unit] = {

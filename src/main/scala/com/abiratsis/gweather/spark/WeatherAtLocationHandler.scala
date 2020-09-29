@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import com.abiratsis.gweather.spark.weather.{CDFNumericType, HumidityDataset, SolarDataset, TemperatureDataset, TemperatureScaleType, WeatherDataset, WindDataset}
 
-private[spark] class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
+private[gweather] class WeatherAtLocationHandler()(implicit val ctx: GeoWeatherContext) {
   private def getWeatherByLocation(cols: Seq[String], cmonth :Int, dist: Int) = {
     val wtCols = cols.map{c => s"wtb.$c"}
     ctx.spark.sql(s"""
