@@ -38,12 +38,12 @@ Before using GWeather please make sure you have the next packages installed on y
 - Python3 
 - pip3 
 
-#### Installation
+#### Running the application
 
-1. Download [gweather_v0.1.0-alpha.zip](https://github.com/abiratsis/GlobalWeatherData/releases/download/v0.1.0-alpha/gweather_v0.1.0-alpha.zip)
-2. Unzip gweather_v0.1.0-alpha.zip.
+1. Download [gweather_v0.1.0.zip](https://github.com/abiratsis/GlobalWeatherData/releases/download/v0.1.0/gweather.zip)
+2. Unzip gweather_v0.1.0.zip.
 3. Grant execute permission to `gweather.sh` with `chmod +x gweather.sh`
-4. Execute the program `./gweather.sh [options]`
+4. Execute the program `./gweather.sh [options]`. See below for all the available options.
 
 #### Configuration
 
