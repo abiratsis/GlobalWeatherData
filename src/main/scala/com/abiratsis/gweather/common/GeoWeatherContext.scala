@@ -7,7 +7,7 @@ import com.abiratsis.gweather.config.{ApplicationSettings, UserSettings}
 import org.apache.spark.sql.SparkSession
 import org.datasyslab.geosparksql.utils.GeoSparkSQLRegistrator
 
-class GeoWeatherContext(val appConfig : ApplicationSettings, val userConfig: UserSettings){
+class GeoWeatherContext private(val appConfig : ApplicationSettings, val userConfig: UserSettings){
   lazy val downloadDirs = Util.ccToMap(appConfig.directories).mapValues{
     case dir : String => Paths.get(userConfig.outputDir, dir).toString
   }

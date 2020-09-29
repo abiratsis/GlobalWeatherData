@@ -4,7 +4,7 @@ import com.abiratsis.gweather.common.{GeoWeatherContext, Util}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[spark] class WorldDataset(val spark: SparkSession)
+private[spark] class WorldDataset private(val spark: SparkSession)
   extends GeoDataset {
 
   val csvSources: Map[String, String] = WorldDataset.csvSources

@@ -9,7 +9,7 @@ import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.generic.auto._
 
-case class UserSettings (outputDir: String,
+case class UserSettings private(outputDir: String,
                          geoSparkDistance: Int = 1,
                          exportFormat: String = "parquet",
                          mergeWinds: Boolean = true,

@@ -4,7 +4,7 @@ import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.exceptions.NullContextException
 import org.apache.spark.sql.SparkSession
 
-private[spark] class HumidityDataset(val spark : SparkSession)
+private[spark] class HumidityDataset private(val spark : SparkSession)
   extends WeatherDataset {
 
   override val csvSources: Map[String, String] = HumidityDataset.csvSources
@@ -12,7 +12,7 @@ private[spark] class HumidityDataset(val spark : SparkSession)
   override val netCDFFields: Map[String, String] = HumidityDataset.netCDFFields
 }
 
-object HumidityDataset extends WeatherMetadata{
+private[spark] object HumidityDataset extends WeatherMetadata{
   var geoWeatherCtx: GeoWeatherContext = _
 
   def apply()(implicit context: GeoWeatherContext): HumidityDataset = {

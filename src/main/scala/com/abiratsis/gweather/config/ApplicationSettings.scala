@@ -26,7 +26,7 @@ case class SourceUrls(airTemperature: String,
                       netShortwaveRadiation: String,
                       worldCountries: String)
 
-case class ApplicationSettings (directories: Directories, sourceUrls: SourceUrls) {
+case class ApplicationSettings private(directories: Directories, sourceUrls: SourceUrls) {
   import com.abiratsis.gweather.common.String._
 
   require(directories != null, "directories can't be null.")
@@ -53,13 +53,9 @@ case class ApplicationSettings (directories: Directories, sourceUrls: SourceUrls
 }
 
 object ApplicationSettings{
-//  def apply(directories: Directories, sourceUrls: SourceUrls): ApplicationSettings = {
-//    new ApplicationSettings(directories, sourceUrls)
-//  }
-
   def apply(): ApplicationSettings = {
-//    val configReader = implicitly(Derivation[ConfigReader[ApplicationSettings]])
     val config = ConfigSource.resources("application.conf").load[ApplicationSettings]
+
     config match {
       case Left(ex : ConfigReaderFailures) => throw new Exception(ex.head.description)
       case Right(c : ApplicationSettings) => c

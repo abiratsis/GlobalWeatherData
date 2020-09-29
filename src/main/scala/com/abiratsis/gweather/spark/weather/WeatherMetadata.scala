@@ -3,7 +3,7 @@ package com.abiratsis.gweather.spark.weather
 import com.abiratsis.gweather.common.GeoWeatherContext
 import com.abiratsis.gweather.spark.GeoMetadata
 
-abstract class WeatherMetadata extends GeoMetadata{
+private[spark] abstract class WeatherMetadata extends GeoMetadata{
   var geoWeatherCtx: GeoWeatherContext
 
   /**

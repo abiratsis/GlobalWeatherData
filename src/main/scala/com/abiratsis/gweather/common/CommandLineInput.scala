@@ -7,7 +7,7 @@ import com.abiratsis.gweather.common.implicits._
 // Resources:
 // https://stackoverflow.com/questions/23242493/linux-unix-man-page-syntax-conventions
 // https://stackoverflow.com/questions/21503865/how-to-denote-that-a-command-line-argument-is-optional-when-printing-usage
-class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
+private[gweather] class CommandLineInput(args: Seq[String]) extends ScallopConf(args) {
   version("gweather 0.1.0 (c) 2020 abiratsis")
   banner("""Usage: gweather -m <input_mode> [-r <root_directory> [processing options, export options] | --user-conf <user_conf_file>]
            |Processing options: [-s start_at], [-a active_sources], [-d geo_distance], [-w merge_winds], [-t merge_temp]
